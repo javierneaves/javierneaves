@@ -1,0 +1,52 @@
+   <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>CER-23-0001</h3>
+                        </div>
+                        <div class="card-body">
+
+                            <button type="button" class="btn btn-outline-success mostrarInputBtn">Success</button>
+                            <button type="button" class="btn btn-outline-primary ">Primary</button>
+                            <div class="mb-3">
+                                <label for="inputFile" class="form-label  text-black p-2 rounded">Entrada</label>
+                                <input type="file" class="form-control" id="inputFile" name="inputFile">
+                              </div>
+                              
+                        </div>
+                    </div>
+                </div>
+                <div class="col" >
+                    <div class="card">
+                        <div class="card-header">
+                            Tarjeta 2
+                        </div>
+                        <div class="card-body">
+                            <button type="button" class="btn btn-outline-success mostrarInputBtn">Success</button>
+                            <button type="button" class="btn btn-outline-primary ">Primary</button>
+                            <div class="mb-3 " id="inputFileContainer">
+                                <label for="inputFile" class="form-label  text-black p-2 rounded">Entrada</label>
+                                <input type="file" class="form-control" id="inputFile" name="inputFile">
+                              </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            Tarjeta 3
+                        </div>
+                        <div class="card-body">
+                            Contenido de la tarjeta 3
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            Tarjeta 4
+                        </div>
+                        <div class="card-body">
+                        Contenido de la tarjeta 4
+                        </div>
+                        </div>
+                        </div>
