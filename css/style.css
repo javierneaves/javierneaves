@@ -8,3 +8,68 @@
     width: 100%;
     height: auto;
   }
+
+  /* Estilo para la barra de navegación */
+.ToolBarButtonsCell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+/* Estilo para los botones de navegación */
+.NormalButton, .DisabledButton {
+  display: inline-block;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  color: #333;
+  cursor: pointer;
+  margin: 0 5px;
+  padding: 5px 10px;
+}
+
+.DisabledButton {
+  cursor: not-allowed;
+}
+
+/* Estilo para el campo de página actual */
+.AspNetDisabled {
+  border: none;
+  background-color: #f5f5f5;
+  color: #333;
+  text-align: center;
+  font-weight: bold;
+  padding: 5px;
+  width: 30px;
+  margin: 0 5px;
+}
+
+/* Estilo para el texto "of" */
+.ToolBarButtonsCell span {
+  margin: 0 5px;
+}
+
+/* Estilo para el número total de páginas */
+#ReportViewer1_ctl09_ctl00_TotalPages {
+  font-weight: bold;
+}
+
+.glyphui {
+  /* Estilos para todos los elementos con la clase glyphui */
+  display: inline-block;
+  font-family: "Glyphicons Halflings";
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.glyphui-previouspage {
+  /* Estilos específicos para el icono de "página anterior" */
+  content: "\e080"; /* Código del icono */
+  margin-right: 5px; /* Espaciado a la derecha */
+}

@@ -1,16 +1,27 @@
 import { getFirestore, doc, getDoc, collection, getDocs, query, where, deleteDoc, orderBy, updateDoc, setDoc, addDoc  } from '../firebase/firebaseJs.js'
 import { app, auth } from '../firebase/config.js'
 import { onAuthStateChanged, updateProfile } from '../firebase/firebaseAuth.js';
+// The code imports various functions and modules from the Firebase SDK to interact with the Firestore database and to manage user authentication.
+// The db variable is assigned the Firestore instance obtained by calling getFirestore function from Firebase SDK using the app configuration object.
 const db = getFirestore(app) 
-console.log('Hola');
+// The code defines a global object named cerData which is used to store the data related to a certificate when a user clicks on the btnGuardar button.
 let cerData = {} 
-
-const mostrarInputBtn = document.querySelectorAll('.mostrarInputBtn');
+// The mostrarInputBtn variable selects all the elements on the page with class mostrarInputBtn and the inputFileContainer variable selects the element with id inputFileContainer.
 const inputFileContainer = document.querySelector('#inputFileContainer');
 const btnGuardar = document.getElementById('btn-guardar')
+// The alert function uses the SweetAlert library to show a modal dialog box with a title, message, and confirmation button.
+function alert(titulo,contenido,icono,buttonText){
+  Swal.fire({
+    title: titulo,
+    text: contenido,
+    icon: icono,
+    confirmButtonText: buttonText
+  })
+  
+}
 
 btnGuardar.addEventListener('click', function (e) {
-    cerData = {} 
+    
     cerData.cer = e.target.dataset.cer 
     if (e.target.dataset.status === 'Entrada') {
       console.log(e.target.dataset.status);
@@ -27,12 +38,6 @@ btnGuardar.addEventListener('click', function (e) {
     almacenarDatos()
 });
 
-mostrarInputBtn.forEach(function(item) {
-    item.addEventListener('click', () => {
-      inputFileContainer.classList.toggle('d-none');
-      });
-});
-
 // BOTON PARA CREAR LAS TARJETAS
 const buscarCertificadoBtn = document.getElementById('buscarCertificadoBtn')
 
@@ -45,12 +50,31 @@ buscarCertificadoBtn.addEventListener('click', function (e) {
 const inputBuscarDesde = document.getElementById('inputBuscarDesde');
 const inputBuscarHasta = document.getElementById('inputBuscarHasta');
 
+inputBuscarDesde.addEventListener('input', function (e) {
+  if(parseInt(inputBuscarDesde.value) < 0){
+    alert('Error', 'No se pueden ingresar numeros negativos','error','OK')
+  }
+   
+});
+
+inputBuscarHasta.addEventListener('input', function (e) {
+  if(parseInt(inputBuscarHasta.value) < 0){
+    alert('Error', 'No se pueden ingresar numeros negativos','error','OK')
+  }
+   
+});
+
+
 function obtenerRango(){
+
+  
   const cardContainer = document.getElementById('card-container');
     cardContainer.innerHTML = ''
     const rango = parseInt(inputBuscarHasta.value) - parseInt(inputBuscarDesde.value)
      if(rango < 0)
      {
+
+        alert('Error','Buscaste desde ' +  parseInt(inputBuscarDesde.value) + ' hasta ' + parseInt(inputBuscarHasta.value) + ' lo que te da un error', 'error', 'OK' )
         console.log("error");
      }else{
         for (let index = 0; index <= rango; index++) {
@@ -100,6 +124,8 @@ function obtenerRango(){
 
 
 function crearTarjetas(cerNumber){
+
+
     let cer = cerNumber < 10 ? 'CER-23-000' + cerNumber : cerNumber <100 ? 'CER-23-00' + cerNumber : 
     cerNumber < 1000?  'CER-23-0' + cerNumber : 'CER-23-' + cerNumber 
     const cardContainer = document.getElementById('card-container');
@@ -149,6 +175,9 @@ function crearTarjetas(cerNumber){
     card.appendChild(cardHeader);
     card.appendChild(cardBody);
     cardContainer.appendChild(card)
+
+    
+    
 }
 
 function guardar() {
@@ -241,7 +270,7 @@ function guardar() {
 
          
         };
-         let cerNom = cerData.cer
+        let cerNom = cerData.cer
         const newCertificadoDoc = doc(db, "certificados", cerNom);
         await setDoc(newCertificadoDoc, newCertificado);
         console.log("Certificado almacenado en Firestore.");
@@ -252,4 +281,137 @@ function guardar() {
   }
 
 
+ // Subir imagenes
+// google sheet url https://docs.google.com/spreadsheets/d/19b1iGnaLVQ1s09OowTPBOslmMvyWX40ahz08njJDyqI/edit#gid=0
+ 
+ let url = "https://script.google.com/macros/s/AKfycby0hAFi_5zcSxHO6SvdLebgQQHUU9_6Kd0SoyDdgickHzb2H44pZKOcRCqjwr7YdFlr/exec"
+ let file =  document.querySelector('#inputFile');
+
+ file.addEventListener('change', function (e) {
+   console.log('file change');
+   let fr = new FileReader()
+   
+   fr.addEventListener('loadend', function (e) {
+     
+     let res = fr.result
+     
+     let spt = res.split('base64,')[1]
+     console.log(file.files[0].type);
+     let obj = {
+       base64:spt,
+       type:file.files[0].type,
+       name:'cerDatacer'
+     }
+     console.log(obj);
+     let response =  fetch(url, {
+         method:'POST',
+         body: JSON.stringify(obj),
+       })
+     .then(r=>r.text())
+     .then(data => {
+       console.log(data);
+       try {
+         const response = JSON.parse(data);
+         console.log(response.link);
+         
+         guardarLinkEnCollecionCertificados(response.link)
+       } catch (e) {
+         console.error("Error al analizar la respuesta JSON: ", e);
+       }
+     })
+     .catch(err => {
+       console.error("Error en la solicitud POST: ", err);
+     });
+   });
+   fr.readAsDataURL(file.files[0])
+ });
+
+ async function guardarLinkEnCollecionCertificados(link) {
+   try {
+
+     const docRef = await addDoc(collection(db, 'utilityBill'), {
+       voltioId: voltioId,
+       link: link,
+       timestamp: new Date().toISOString()
+     }).then(getImagesFromUtilityBillCollection())
+
+   } catch (error) {
+     console.error('Error al guardar los datos:', error);
+   }
+ }
+ 
+ let viewCustomersImageButton = document.getElementById('viewCustomersImageButton');
+ viewCustomersImageButton.addEventListener('click', function (e) {
+   getImagesFromUtilityBillCollection()
+ });
+
+ async function getImagesFromUtilityBillCollection(){
+   const billsCol = collection(db, 'utilityBill');
+   const q = query(billsCol, where('voltioId', '==', voltioId));
+   const querySnapshot = await getDocs(q);
+   const bills = querySnapshot.docs.map((doc) => doc.data());
+   console.log(bills);
+   //generateUtilityBillImagesHTML(bills)
+   const thumbnailElements = bills.map((thumbnail) => generateThumbnail(thumbnail.link, thumbnail.voltioId));
+   insertThumbnails(thumbnailElements);
+   
+ }
+
+ function generateUtilityBillImagesHTML(array) {
+   const container = document.getElementById('utilityBillImagesContainer');
+   container.innerHTML = ""
+   array.forEach(item => {
+     const div = document.createElement('div');
+     div.className = 'col-sm-6 col-md-3';
+     
+     const thumbnail = document.createElement('div');
+     thumbnail.className = 'thumbnail';
+     
+     const img = document.createElement('img');
+     img.src = item.link;
+     img.alt = item.voltioId;
+     img.className = 'img-thumbnail mb-2';
+     img.addEventListener("click", () => {
+       window.open(item.link);
+     });
+     thumbnail.appendChild(img);
+     div.appendChild(thumbnail);
+     
+     container.appendChild(div);
+   });
+ }
+
+ function generateThumbnail(link, voltioId) {
+   const thumbnailDiv = document.createElement('div');
+   thumbnailDiv.classList.add('col-sm-6', 'col-md-3');
+ 
+   const thumbnail = document.createElement('div');
+   thumbnail.classList.add('thumbnail');
+ 
+   const image = document.createElement('img');
+   image.classList.add('img-thumbnail', 'mb-2');
+   image.src = link;
+   image.alt = voltioId;
+ 
+   const closeButton = document.createElement('button');
+   closeButton.classList.add('close');
+   closeButton.innerHTML = '&times;';
+   closeButton.addEventListener('click', () => thumbnailDiv.remove());
+ 
+   thumbnail.appendChild(image);
+   thumbnail.appendChild(closeButton);
+   thumbnailDiv.appendChild(thumbnail);
+ 
+   image.addEventListener('click', () => window.open(link, '_blank'));
+ 
+   return thumbnailDiv;
+ }
+ 
+ function insertThumbnails(thumbnails) {
+   const container = document.getElementById('utilityBillImagesContainer');
+   const customerFilesUpload = document.getElementById('customerFilesUpload');
+   customerFilesUpload.value = ''
+   container.innerHTML = ''
+   thumbnails.forEach((thumbnail) => container.appendChild(thumbnail));
+ }
  
