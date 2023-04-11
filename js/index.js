@@ -57,7 +57,7 @@ inputBuscarDesde.addEventListener('input', function (e) {
    
 });
 
-inputBuscarHasta.addEventListener('input', function (e) {
+inputBuscarHasta.addEventListener('change', function (e) {
   if(parseInt(inputBuscarHasta.value) < 0){
     alert('Error', 'No se pueden ingresar numeros negativos','error','OK')
   }
