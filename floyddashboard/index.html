@@ -309,6 +309,98 @@
     .bar-label { width: 110px; font-size: 10px; }
     .grid { grid-template-columns: 1fr; }
   }
+
+  /* VIEW TOGGLE */
+  .view-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    padding: 8px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .view-btn.active {
+    background: var(--accent);
+    color: #0c0c0e;
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+  /* COMPARISON TABLE */
+  .comp-section { margin-bottom: 2rem; }
+  .comp-section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .comp-table { width: 100%; border-collapse: collapse; }
+  .comp-table th {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    padding: 8px 10px;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .comp-table th.q-col { text-align: left; width: 220px; }
+  .comp-table td {
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    text-align: center;
+    font-size: 12px;
+    vertical-align: middle;
+  }
+  .comp-table td.q-cell {
+    text-align: left;
+    font-size: 11px;
+    color: var(--text);
+    background: var(--card);
+    line-height: 1.4;
+  }
+  .comp-table tr:hover td { filter: brightness(1.08); }
+  .pct-cell {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0c0c0e;
+    border-radius: 4px;
+  }
+  .pct-na {
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .sub-label {
+    display: block;
+    font-size: 9px;
+    color: #0c0c0e;
+    opacity: 0.65;
+    margin-top: 2px;
+    line-height: 1.2;
+  }
+  .winner-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: #0c0c0e;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 10px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
 </style>
 </head>
 <body>
@@ -330,6 +422,7 @@
   <button class="nav-btn" onclick="show('grocery', this)">Grocery & Meal Prep</button>
   <button class="nav-btn" onclick="show('work', this)">Work / School</button>
   <button class="nav-btn" onclick="show('overall', this)">Overall Q</button>
+  <button class="nav-btn" onclick="show('comparison', this)">★ Comparison</button>
 </nav>
 
 <main>
@@ -571,6 +664,21 @@
       <div id="ov_pref"></div>
     </div>
   </div>
+
+  <!-- ============ COMPARISON ============ -->
+  <div class="section" id="comparison">
+    <div class="section-header">
+      <div class="section-title">Cross-Concept Comparison</div>
+      <div class="n-badge">all 5 concepts</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:2rem;flex-wrap:wrap;align-items:center;">
+      <button class="view-btn active" id="btn-top1" onclick="switchView('top1')">Top response only</button>
+      <button class="view-btn" id="btn-top2" onclick="switchView('top2')">Top 2 responses combined</button>
+    </div>
+    <div id="comp-top1"><div id="comp1_content"></div></div>
+    <div id="comp-top2" style="display:none"><div id="comp2_content"></div></div>
+  </div>
+
 
 </main>
 
@@ -902,6 +1010,118 @@ bars('ov_pref', [
   ['Differently for different scenarios','53.2'],
   ['Same across tasks','46.8']
 ], ovC);
+
+// ---- COMPARISON DATA ----
+const CONCEPTS = ['Morning Routine','Document Digitizer','Language Tutor','Grocery & Meal Prep','Work / School'];
+const compData = {
+  sections: [
+    {
+      title: 'Perception & Relevance',
+      questions: [
+        { q:'Relevance', top1_label:'Extremely relevant', top2_label:'Extremely + Very relevant',
+          top1:[29.6, 16.9, 27.8, 38.2, 18.8], top2:[55.0, 53.5, 40.3, 65.8, 37.6] },
+        { q:'Challenge level', top1_label:'Huge challenge', top2_label:'Huge + Somewhat of a challenge',
+          top1:[14.1, null, 9.7, 14.5, 16.2], top2:[43.7, null, 40.3, 46.1, 40.0] },
+        { q:'Improvement over current', top1_label:'Huge improvement', top2_label:'Huge + Somewhat of an improvement',
+          top1:[40.8, 43.7, 47.2, 50.0, 33.8], top2:[66.2, 69.1, 70.8, 73.7, 61.3] },
+      ]
+    },
+    {
+      title: 'Video Reaction',
+      questions: [
+        { q:'Like the video', top1_label:'Love it', top2_label:'Love it + Like it',
+          top1:[40.8, 32.4, 44.4, 48.7, 36.2], top2:[77.4, 77.5, 86.1, 82.9, 67.4] },
+        { q:'Helpfulness day-to-day', top1_label:'Very helpful', top2_label:'Very + Somewhat helpful',
+          top1:[40.8, 43.7, 45.8, 53.9, 35.0], top2:[80.2, 70.5, 70.8, 80.2, 63.7] },
+        { q:'Excitement about Floyd', top1_label:'Very Excited', top2_label:'Very Excited + Somewhat excited',
+          top1:[42.3, 39.4, 41.7, 53.9, 36.2], top2:[78.9, 69.0, 79.2, 84.2, 64.9] },
+        { q:'Likelihood to use Floyd', top1_label:'Very likely', top2_label:'Very + Somewhat likely',
+          top1:[46.5, 45.1, 47.2, 53.9, 40.0], top2:[73.3, 69.0, 75.0, 82.8, 61.2] },
+        { q:'Want Floyd in home', top1_label:'Yes, definitely', top2_label:'Yes, definitely + Pretty close',
+          top1:[39.4, 40.8, 37.5, 46.1, 35.0], top2:[70.4, 66.2, 65.3, 71.1, 57.5] },
+      ]
+    },
+    {
+      title: 'Agreement Statements (1–5 scale)',
+      questions: [
+        { q:'Saves me a lot of time', top1_label:'Rating 5 (Strongly agree)', top2_label:'Rating 4 + 5',
+          top1:[39.4, 43.7, 33.3, 48.7, 36.2], top2:[64.8, 64.8, 58.3, 73.7, 60.0] },
+        { q:'Home would run more smoothly', top1_label:'Rating 5 (Strongly agree)', top2_label:'Rating 4 + 5',
+          top1:[38.0, 31.0, 26.4, 39.5, 36.2], top2:[69.0, 54.9, 50.0, 73.7, 56.2] },
+        { q:'Trust my data used responsibly', top1_label:'Rating 5 (Strongly agree)', top2_label:'Rating 4 + 5',
+          top1:[26.8, 23.9, 15.3, 26.3, 26.2], top2:[60.6, 52.1, 48.6, 50.0, 57.4] },
+        { q:'Improvement over existing tech', top1_label:'Rating 5 (Strongly agree)', top2_label:'Rating 4 + 5',
+          top1:[43.7, 35.2, 51.4, 60.5, 42.5], top2:[76.1, 74.6, 76.4, 81.6, 72.5] },
+      ]
+    }
+  ]
+};
+
+function pctColor(val) {
+  if(val === null) return null;
+  const ratio = Math.min(Math.max((val - 10) / 70, 0), 1);
+  const r = Math.round(255 - ratio * (255 - 74));
+  const g = Math.round(255 - ratio * (255 - 222));
+  const b = Math.round(255 - ratio * (255 - 128));
+  return `rgb(${r},${g},${b})`;
+}
+
+function buildCompTable(viewKey) {
+  const containerId = viewKey === 'top1' ? 'comp1_content' : 'comp2_content';
+  const el = document.getElementById(containerId);
+  if(!el) return;
+
+  let html = '';
+  for(const sec of compData.sections) {
+    html += `<div class="comp-section">
+      <div class="comp-section-title">${sec.title}</div>
+      <div style="overflow-x:auto;">
+      <table class="comp-table">
+        <thead><tr>
+          <th class="q-col">Question</th>
+          ${CONCEPTS.map(c => `<th>${c}</th>`).join('')}
+        </tr></thead>
+        <tbody>`;
+
+    for(const row of sec.questions) {
+      const vals = row[viewKey];
+      const label = row[viewKey + '_label'];
+      const maxVal = Math.max(...vals.filter(v => v !== null));
+
+      html += `<tr>
+        <td class="q-cell">${row.q}<br><span style="font-size:9px;color:var(--muted)">${label}</span></td>`;
+
+      for(let i = 0; i < 5; i++) {
+        const v = vals[i];
+        if(v === null) {
+          html += `<td><span class="pct-na">N/A</span></td>`;
+        } else {
+          const bg = pctColor(v);
+          const isWinner = v === maxVal;
+          html += `<td>
+            <div class="pct-cell" style="background:${bg};padding:5px 8px;border-radius:5px;display:inline-block;min-width:52px;">
+              ${v.toFixed(1)}%${isWinner ? '<span class="winner-badge">TOP</span>' : ''}
+            </div>
+          </td>`;
+        }
+      }
+      html += '</tr>';
+    }
+    html += '</tbody></table></div></div>';
+  }
+  el.innerHTML = html;
+}
+
+function switchView(v) {
+  document.getElementById('comp-top1').style.display = v === 'top1' ? 'block' : 'none';
+  document.getElementById('comp-top2').style.display = v === 'top2' ? 'block' : 'none';
+  document.getElementById('btn-top1').classList.toggle('active', v === 'top1');
+  document.getElementById('btn-top2').classList.toggle('active', v === 'top2');
+}
+
+buildCompTable('top1');
+buildCompTable('top2');
+
 </script>
 </body>
 </html>
