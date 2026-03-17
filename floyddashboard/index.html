@@ -401,6 +401,32 @@
     vertical-align: middle;
   }
 
+
+  /* Q12 TRAITS */
+  .traits-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+  .trait-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; }
+  .trait-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+  .trait-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .trait-stacked { display: flex; height: 24px; border-radius: 4px; overflow: hidden; gap: 1px; margin-bottom: 6px; }
+  .trait-seg { display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: rgba(0,0,0,0.7); transition: all 0.5s; }
+  .trait-summary { font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; }
+
+  /* EXPORT BUTTON */
+  .export-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .export-btn:hover { background: var(--accent); color: #0c0c0e; }
+
 </style>
 </head>
 <body>
@@ -471,6 +497,9 @@
       <div class="card-title">Agreement statements — 1 (strongly disagree) to 5 (strongly agree)</div>
       <div id="mr_agree"></div>
     </div>
+    <div class="sub-heading" style="margin-top:1.5rem">Q12 — Floyd personality / style rating (1=not at all, 5=extremely)</div>
+    <div class="traits-grid" id="mr_traits"></div>
+
   </div>
 
   <!-- ============ DOCUMENT DIGITIZER ============ -->
@@ -483,6 +512,10 @@
       <div class="card">
         <div class="card-title">Overall relevance to you / your household</div>
         <div id="dd_rel"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">How big a challenge is this currently?</div>
+        <div id="dd_chal"></div>
       </div>
       <div class="card">
         <div class="card-title">How much of an improvement using Floyd vs. today?</div>
@@ -513,6 +546,9 @@
       <div class="card-title">Agreement statements — 1 (strongly disagree) to 5 (strongly agree)</div>
       <div id="dd_agree"></div>
     </div>
+    <div class="sub-heading" style="margin-top:1.5rem">Q12 — Floyd personality / style rating (1=not at all, 5=extremely)</div>
+    <div class="traits-grid" id="dd_traits"></div>
+
   </div>
 
   <!-- ============ LANGUAGE TUTOR ============ -->
@@ -559,6 +595,9 @@
       <div class="card-title">Agreement statements — 1 (strongly disagree) to 5 (strongly agree)</div>
       <div id="lt_agree"></div>
     </div>
+    <div class="sub-heading" style="margin-top:1.5rem">Q12 — Floyd personality / style rating (1=not at all, 5=extremely)</div>
+    <div class="traits-grid" id="lt_traits"></div>
+
   </div>
 
   <!-- ============ GROCERY & MEAL PREP ============ -->
@@ -605,6 +644,9 @@
       <div class="card-title">Agreement statements — 1 (strongly disagree) to 5 (strongly agree)</div>
       <div id="gm_agree"></div>
     </div>
+    <div class="sub-heading" style="margin-top:1.5rem">Q12 — Floyd personality / style rating (1=not at all, 5=extremely)</div>
+    <div class="traits-grid" id="gm_traits"></div>
+
   </div>
 
   <!-- ============ WORK / SCHOOL ============ -->
@@ -651,6 +693,9 @@
       <div class="card-title">Agreement statements — 1 (strongly disagree) to 5 (strongly agree)</div>
       <div id="ws_agree"></div>
     </div>
+    <div class="sub-heading" style="margin-top:1.5rem">Q12 — Floyd personality / style rating (1=not at all, 5=extremely)</div>
+    <div class="traits-grid" id="ws_traits"></div>
+
   </div>
 
   <!-- ============ OVERALL ============ -->
@@ -671,9 +716,12 @@
       <div class="section-title">Cross-Concept Comparison</div>
       <div class="n-badge">all 5 concepts</div>
     </div>
-    <div style="display:flex;gap:8px;margin-bottom:2rem;flex-wrap:wrap;align-items:center;">
-      <button class="view-btn active" id="btn-top1" onclick="switchView('top1')">Top response only</button>
-      <button class="view-btn" id="btn-top2" onclick="switchView('top2')">Top 2 responses combined</button>
+    <div style="display:flex;gap:8px;margin-bottom:2rem;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="view-btn active" id="btn-top1" onclick="switchView('top1')">Top response only</button>
+        <button class="view-btn" id="btn-top2" onclick="switchView('top2')">Top 2 responses combined</button>
+      </div>
+      <button class="export-btn" onclick="exportToCSV()">↓ Export to CSV</button>
     </div>
     <div id="comp-top1"><div id="comp1_content"></div></div>
     <div id="comp-top2" style="display:none"><div id="comp2_content"></div></div>
@@ -776,16 +824,18 @@ function bars(id, data, colorFn) {
   if(!el) return;
   el.innerHTML = data.map(([name, pct]) => {
     const color = colorFn(name);
-    const w = Math.max(parseFloat(pct), 1);
-    const showIn = parseFloat(pct) >= 14;
+    const numPct = parseFloat(pct);
+    const w = Math.max(numPct, 1);
+    const showIn = numPct >= 14;
+    const display = Math.round(numPct) + '%';
     return `<div class="bar-row">
       <div class="bar-label">${name}</div>
       <div class="bar-track">
         <div class="bar-fill" style="width:${w}%;background:${color}">
-          ${showIn ? `<span class="bar-val">${pct}%</span>` : ''}
+          ${showIn ? `<span class="bar-val">${display}</span>` : ''}
         </div>
       </div>
-      ${!showIn ? `<span class="bar-val-out">${pct}%</span>` : ''}
+      ${!showIn ? `<span class="bar-val-out">${display}</span>` : ''}
     </div>`;
   }).join('');
 }
@@ -852,6 +902,10 @@ agree('mr_agree', [
 ]);
 
 // ---- DOCUMENT DIGITIZER ----
+bars('dd_chal', [
+  ['Somewhere in the middle','33.8'],['Somewhat of a challenge','23.9'],
+  ['Not a challenge at all','18.3'],['Not really much of a challenge','15.5'],['Huge challenge','8.5']
+], chalC);
 bars('dd_rel', [
   ['Very relevant','36.6'],['Somewhat relevant','32.4'],['Extremely relevant','16.9'],
   ['Not relevant','12.7'],['Not relevant at all','1.4']
@@ -1100,7 +1154,7 @@ function buildCompTable(viewKey) {
           const isWinner = v === maxVal;
           html += `<td>
             <div class="pct-cell" style="background:${bg};padding:5px 8px;border-radius:5px;display:inline-block;min-width:52px;">
-              ${v.toFixed(1)}%${isWinner ? '<span class="winner-badge">TOP</span>' : ''}
+              ${Math.round(v)}%${isWinner ? '<span class="winner-badge">TOP</span>' : ''}
             </div>
           </td>`;
         }
@@ -1121,6 +1175,118 @@ function switchView(v) {
 
 buildCompTable('top1');
 buildCompTable('top2');
+
+
+// ---- Q12 TRAIT DATA ----
+const traitData = {
+  'Morning Routine': {
+    Calm:              {1:1.4, 2:5.6,  3:7.0,  4:36.6, 5:49.3},
+    Competent:         {1:0,   2:1.4,  3:9.9,  4:36.6, 5:52.1},
+    Efficient:         {1:0,   2:4.2,  3:9.9,  4:35.2, 5:50.7},
+    Supportive:        {1:1.4, 2:4.2,  3:8.5,  4:32.4, 5:53.5},
+    'Emotionally aware':{1:0,  2:11.3, 3:22.5, 4:36.6, 5:29.6},
+  },
+  'Document Digitizer': {
+    Calm:              {1:1.4, 2:5.6,  3:2.8,  4:38.0, 5:52.1},
+    Competent:         {1:0,   2:2.8,  3:16.9, 4:29.6, 5:50.7},
+    Efficient:         {1:0,   2:1.4,  3:14.1, 4:38.0, 5:46.5},
+    Supportive:        {1:1.4, 2:1.4,  3:8.5,  4:39.4, 5:49.3},
+    'Emotionally aware':{1:2.8, 2:5.6, 3:32.4, 4:35.2, 5:23.9},
+  },
+  'Language Tutor': {
+    Calm:              {1:2.8, 2:5.6,  3:13.9, 4:23.6, 5:54.2},
+    Competent:         {1:1.4, 2:6.9,  3:4.2,  4:36.1, 5:51.4},
+    Efficient:         {1:4.2, 2:1.4,  3:18.1, 4:26.4, 5:50.0},
+    Supportive:        {1:1.4, 2:4.2,  3:2.8,  4:19.4, 5:72.2},
+    'Emotionally aware':{1:2.8, 2:2.8, 3:19.4, 4:34.7, 5:40.3},
+  },
+  'Grocery & Meal Prep': {
+    Calm:              {1:2.6, 2:7.9,  3:2.6,  4:36.8, 5:50.0},
+    Competent:         {1:1.3, 2:1.3,  3:13.2, 4:23.7, 5:60.5},
+    Efficient:         {1:0,   2:2.6,  3:7.9,  4:23.7, 5:65.8},
+    Supportive:        {1:0,   2:2.6,  3:10.5, 4:27.6, 5:59.2},
+    'Emotionally aware':{1:2.6, 2:2.6, 3:32.9, 4:32.9, 5:28.9},
+  },
+  'Work / School': {
+    Calm:              {1:0,   2:2.5,  3:16.2, 4:33.8, 5:47.5},
+    Competent:         {1:1.2, 2:5.0,  3:6.2,  4:35.0, 5:52.5},
+    Efficient:         {1:1.2, 2:5.0,  3:3.8,  4:32.5, 5:57.5},
+    Supportive:        {1:0,   2:12.5, 3:11.2, 4:26.2, 5:50.0},
+    'Emotionally aware':{1:2.5, 2:11.2, 3:33.8, 4:25.0, 5:27.5},
+  },
+};
+
+const traitColors = ['#f87171','#fca5a5','#6b7280','#93c5fd','#60a5fa'];
+const traitDots = ['#c8f060','#60c8f0','#f060c8','#fbbf24','#a78bfa'];
+
+const prefixToName = {
+  mr: 'Morning Routine', dd: 'Document Digitizer', lt: 'Language Tutor',
+  gm: 'Grocery & Meal Prep', ws: 'Work / School'
+};
+
+function buildTraits(prefix) {
+  const concept = prefixToName[prefix];
+  const data = traitData[concept];
+  if(!data) return;
+  const el = document.getElementById(prefix + '_traits');
+  if(!el) return;
+
+  const traits = ['Calm','Competent','Efficient','Supportive','Emotionally aware'];
+  el.innerHTML = traits.map((trait, ti) => {
+    const d = data[trait];
+    const segs = [1,2,3,4,5].map(rating => {
+      const pct = d[rating] || 0;
+      const show = pct >= 10;
+      return `<div class="trait-seg" style="flex:${Math.max(pct,0.5)};background:${traitColors[rating-1]}">${show ? Math.round(pct)+'%' : ''}</div>`;
+    }).join('');
+    const top2 = Math.round((d[4]||0) + (d[5]||0));
+    const avg = ((1*(d[1]||0)+2*(d[2]||0)+3*(d[3]||0)+4*(d[4]||0)+5*(d[5]||0))/100).toFixed(1);
+    return `<div class="trait-card">
+      <div class="trait-name"><span class="trait-dot" style="background:${traitDots[ti]}"></span>${trait}</div>
+      <div class="trait-stacked">${segs}</div>
+      <div class="trait-summary">
+        <span>4+5 (agree): <strong>${top2}%</strong></span>
+        <span>Avg: <strong>${avg}</strong></span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+['mr','dd','lt','gm','ws'].forEach(buildTraits);
+
+// Update comparison data with dd_chal
+compData.sections[0].questions[1].top1[1] = 8.5;
+compData.sections[0].questions[1].top2[1] = 8.5 + 23.9;
+buildCompTable('top1');
+buildCompTable('top2');
+
+// ---- EXPORT TO CSV ----
+function exportToCSV() {
+  const currentView = document.getElementById('comp-top1').style.display !== 'none' ? 'top1' : 'top2';
+  const viewLabel = currentView === 'top1' ? 'Top Response' : 'Top 2 Responses Combined';
+  
+  let rows = [['Floyd Concept Testing — Cross-Concept Comparison']];
+  rows.push([viewLabel]);
+  rows.push([]);
+  rows.push(['Section','Question','Response Counted',...CONCEPTS]);
+
+  for(const sec of compData.sections) {
+    for(const row of sec.questions) {
+      const label = row[currentView + '_label'];
+      const vals = row[currentView].map(v => v === null ? 'N/A' : Math.round(v) + '%');
+      rows.push([sec.title, row.q, label, ...vals]);
+    }
+  }
+
+  const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Floyd_Comparison_${currentView === 'top1' ? 'TopBox' : 'Top2Box'}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 </script>
 </body>
