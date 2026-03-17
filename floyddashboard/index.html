@@ -3,438 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Floyd Survey Analysis Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>Floyd Concept Testing Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0c0c0e;
-    --surface: #141416;
-    --card: #1a1a1e;
-    --border: #2a2a30;
-    --text: #f0ede8;
-    --muted: #7a7880;
-    --accent: #c8f060;
-    --accent2: #60c8f0;
-    --accent3: #f060c8;
-    --pos1: #4ade80;
-    --pos2: #86efac;
-    --pos3: #bbf7d0;
-    --neu: #6b7280;
-    --neg1: #f87171;
-    --neg2: #fca5a5;
-    --neg3: #fecaca;
-    --blue1: #60a5fa;
-    --blue2: #93c5fd;
-    --purple1: #a78bfa;
-    --amber1: #fbbf24;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'DM Mono', monospace;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0c0e;--surface:#141416;--card:#1a1a1e;--border:#2a2a30;
+  --text:#f0ede8;--muted:#7a7880;
+  --accent:#c8f060;--blue:#60a5fa;--purple:#a78bfa;--amber:#fbbf24;--red:#f87171;
+  --pos1:#4ade80;--pos2:#86efac;--pos3:#bbf7d0;--neu:#6b7280;--neg1:#f87171;--neg2:#fca5a5;--neg3:#fecaca;
+}
+body{font-family:'DM Mono',monospace;background:var(--bg);color:var(--text);min-height:100vh}
 
-  /* HEADER */
-  header {
-    padding: 3rem 2rem 2rem;
-    border-bottom: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
-  }
-  header::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(200,240,96,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .header-tag {
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    color: var(--accent);
-    text-transform: uppercase;
-    margin-bottom: 0.75rem;
-  }
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 800;
-    line-height: 1;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-  }
-  h1 span { color: var(--accent); }
-  .header-meta {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 1rem;
-    display: flex; gap: 2rem; flex-wrap: wrap;
-  }
-  .header-meta strong { color: var(--text); }
+header{padding:2.5rem 2rem 1.5rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+header::before{content:'';position:absolute;top:-80px;right:-80px;width:350px;height:350px;background:radial-gradient(circle,rgba(200,240,96,.07) 0%,transparent 70%);pointer-events:none}
+.htag{font-size:11px;letter-spacing:.15em;color:var(--accent);text-transform:uppercase;margin-bottom:.6rem}
+h1{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,3rem);font-weight:800;line-height:1;margin-bottom:.75rem}
+h1 span{color:var(--accent)}
+.hmeta{font-size:11px;color:var(--muted);display:flex;gap:1.5rem;flex-wrap:wrap}
+.hmeta strong{color:var(--text)}
 
-  /* NAV */
-  nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(12,12,14,0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    display: flex;
-    gap: 0;
-    overflow-x: auto;
-  }
-  nav::-webkit-scrollbar { height: 0; }
-  .nav-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    padding: 1rem 1.25rem;
-    background: none;
-    border: none;
-    color: var(--muted);
-    cursor: pointer;
-    white-space: nowrap;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
-  .nav-btn:hover { color: var(--text); }
-  .nav-btn.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-  }
+nav{position:sticky;top:0;z-index:100;background:rgba(12,12,14,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;gap:0;overflow-x:auto}
+nav::-webkit-scrollbar{height:0}
+.nb{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.05em;padding:.9rem 1.1rem;background:none;border:none;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;text-transform:uppercase}
+.nb:hover{color:var(--text)}
+.nb.active{color:var(--accent);border-bottom-color:var(--accent)}
 
-  /* MAIN */
-  main { padding: 2rem; max-width: 1400px; margin: 0 auto; }
+main{padding:2rem;max-width:1400px;margin:0 auto}
 
-  /* SECTION */
-  .section { display: none; }
-  .section.active { display: block; }
+.sec{display:none}
+.sec.active{display:block}
 
-  .section-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text);
-  }
-  .n-badge {
-    font-size: 11px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    padding: 4px 10px;
-    border-radius: 20px;
-    letter-spacing: 0.05em;
-  }
+.sec-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:wrap;gap:1rem}
+.sec-title{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:700}
+.nbadge{font-size:11px;background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:20px;letter-spacing:.05em}
 
-  /* GRID */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 1.25rem;
-    margin-bottom: 1.5rem;
-  }
-  .grid-wide { grid-template-columns: 1fr; }
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.1rem;margin-bottom:1.1rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem}
+.ctitle{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:1.1rem;line-height:1.5}
 
-  /* CARD */
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-  }
-  .card-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    margin-bottom: 1.25rem;
-    line-height: 1.5;
-  }
+.br{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.bl{font-size:11px;color:var(--muted);width:155px;flex-shrink:0;text-align:right;line-height:1.3}
+.bt{flex:1;background:var(--surface);border-radius:4px;height:20px;overflow:hidden}
+.bf{height:100%;border-radius:4px;display:flex;align-items:center;padding:0 7px;min-width:2px}
+.bv{font-size:10px;font-weight:500;color:rgba(0,0,0,.8);white-space:nowrap}
+.bvo{font-size:11px;color:var(--muted);white-space:nowrap;min-width:28px}
 
-  /* BAR CHART */
-  .bar-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-  }
-  .bar-label {
-    font-size: 11px;
-    color: var(--muted);
-    width: 160px;
-    flex-shrink: 0;
-    text-align: right;
-    line-height: 1.3;
-  }
-  .bar-track {
-    flex: 1;
-    background: var(--surface);
-    border-radius: 4px;
-    height: 22px;
-    overflow: hidden;
-    position: relative;
-  }
-  .bar-fill {
-    height: 100%;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    padding: 0 8px;
-    min-width: 2px;
-    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
-  }
-  .bar-val {
-    font-size: 10px;
-    font-weight: 500;
-    color: rgba(0,0,0,0.8);
-    white-space: nowrap;
-  }
-  .bar-val-out {
-    font-size: 11px;
-    color: var(--muted);
-    white-space: nowrap;
-    min-width: 34px;
-  }
+.sub-hdr{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);margin:1.5rem 0 .9rem;display:flex;align-items:center;gap:.5rem}
+.sub-hdr::before{content:'';display:inline-block;width:12px;height:3px;background:var(--accent);border-radius:2px}
 
-  /* STACKED AGREE */
-  .agree-row { margin-bottom: 1rem; }
-  .agree-label {
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 5px;
-    line-height: 1.4;
-  }
-  .stacked-bar {
-    display: flex;
-    height: 26px;
-    border-radius: 5px;
-    overflow: hidden;
-    gap: 1px;
-  }
-  .stack-seg {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: 500;
-    color: rgba(0,0,0,0.75);
-    transition: all 0.6s;
-  }
-  .agree-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 1.25rem;
-    font-size: 10px;
-    color: var(--muted);
-  }
-  .agree-legend span { display: flex; align-items: center; gap: 4px; }
-  .legend-dot {
-    width: 10px; height: 10px;
-    border-radius: 2px;
-    display: inline-block;
-    flex-shrink: 0;
-  }
+.agree-row{margin-bottom:.9rem}
+.agree-lbl{font-size:11px;color:var(--muted);margin-bottom:4px;line-height:1.4}
+.stk{display:flex;height:24px;border-radius:4px;overflow:hidden;gap:1px}
+.ss{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:rgba(0,0,0,.72)}
+.ag-leg{display:flex;flex-wrap:wrap;gap:10px;margin-top:1rem;font-size:10px;color:var(--muted)}
+.ag-leg span{display:flex;align-items:center;gap:3px}
+.dot{width:9px;height:9px;border-radius:2px;display:inline-block;flex-shrink:0}
 
-  /* SPECIAL CARD - big stat */
-  .big-stat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .stat-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
-  .stat-val { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--accent); }
-  .stat-desc { font-size: 11px; color: var(--muted); }
+.traits-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
+.tcrd{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.1rem}
+.tname{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:.8rem;display:flex;align-items:center;gap:7px}
+.tdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.tstk{display:flex;height:22px;border-radius:4px;overflow:hidden;gap:1px;margin-bottom:5px}
+.tsum{font-size:11px;color:var(--muted);display:flex;justify-content:space-between}
+.tsum strong{color:var(--text)}
 
-  /* DONUT */
-  .donut-wrap {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-  }
-  canvas.donut { flex-shrink: 0; }
+/* COMPARISON */
+.view-btns{display:flex;gap:8px;flex-wrap:wrap}
+.vbtn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.05em;padding:7px 14px;background:var(--surface);border:1px solid var(--border);color:var(--muted);border-radius:6px;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.vbtn.active{background:var(--accent);color:#0c0c0e;border-color:var(--accent);font-weight:700}
+.exp-btn{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.05em;padding:7px 14px;background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:6px;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.exp-btn:hover{background:var(--accent);color:#0c0c0e}
 
-  /* SECTION DIVIDER */
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 1.5rem 0;
-  }
-  .sub-heading {
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .sub-heading::before {
-    content: '';
-    display: inline-block;
-    width: 12px;
-    height: 3px;
-    background: var(--accent);
-    border-radius: 2px;
-  }
+.comp-sec{margin-bottom:1.75rem}
+.comp-sec-title{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);padding:.4rem 0;margin-bottom:.5rem;border-bottom:1px solid var(--border)}
+.ctable{width:100%;border-collapse:collapse}
+.ctable th{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);padding:7px 10px;text-align:center;background:var(--surface);border:1px solid var(--border);white-space:nowrap}
+.ctable th.qcol{text-align:left;width:210px}
+.ctable td{padding:7px 9px;border:1px solid var(--border);text-align:center;font-size:12px;vertical-align:middle}
+.ctable td.qcell{text-align:left;font-size:11px;color:var(--text);background:var(--card);line-height:1.4}
+.ctable tr:hover td{filter:brightness(1.07)}
+.pcell{font-size:13px;font-weight:700;color:#0c0c0e;border-radius:4px;padding:4px 8px;display:inline-block;min-width:50px}
+.top-badge{display:inline-block;background:var(--accent);color:#0c0c0e;font-size:8px;font-weight:700;padding:1px 4px;border-radius:8px;margin-left:3px;vertical-align:middle}
 
-  @media (max-width: 600px) {
-    main { padding: 1rem; }
-    .bar-label { width: 110px; font-size: 10px; }
-    .grid { grid-template-columns: 1fr; }
-  }
-
-  /* VIEW TOGGLE */
-  .view-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    padding: 8px 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
-  .view-btn.active {
-    background: var(--accent);
-    color: #0c0c0e;
-    border-color: var(--accent);
-    font-weight: 700;
-  }
-  /* COMPARISON TABLE */
-  .comp-section { margin-bottom: 2rem; }
-  .comp-section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    padding: 0.5rem 0;
-    margin-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border);
-  }
-  .comp-table { width: 100%; border-collapse: collapse; }
-  .comp-table th {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    padding: 8px 10px;
-    text-align: center;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  .comp-table th.q-col { text-align: left; width: 220px; }
-  .comp-table td {
-    padding: 8px 10px;
-    border: 1px solid var(--border);
-    text-align: center;
-    font-size: 12px;
-    vertical-align: middle;
-  }
-  .comp-table td.q-cell {
-    text-align: left;
-    font-size: 11px;
-    color: var(--text);
-    background: var(--card);
-    line-height: 1.4;
-  }
-  .comp-table tr:hover td { filter: brightness(1.08); }
-  .pct-cell {
-    font-size: 13px;
-    font-weight: 700;
-    color: #0c0c0e;
-    border-radius: 4px;
-  }
-  .pct-na {
-    color: var(--muted);
-    font-size: 11px;
-  }
-  .sub-label {
-    display: block;
-    font-size: 9px;
-    color: #0c0c0e;
-    opacity: 0.65;
-    margin-top: 2px;
-    line-height: 1.2;
-  }
-  .winner-badge {
-    display: inline-block;
-    background: var(--accent);
-    color: #0c0c0e;
-    font-size: 9px;
-    font-weight: 700;
-    padding: 1px 5px;
-    border-radius: 10px;
-    margin-left: 4px;
-    vertical-align: middle;
-  }
-
-
-  /* Q12 TRAITS */
-  .traits-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
-  .trait-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; }
-  .trait-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
-  .trait-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .trait-stacked { display: flex; height: 24px; border-radius: 4px; overflow: hidden; gap: 1px; margin-bottom: 6px; }
-  .trait-seg { display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 500; color: rgba(0,0,0,0.7); transition: all 0.5s; }
-  .trait-summary { font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; }
-
-  /* EXPORT BUTTON */
-  .export-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    padding: 8px 16px;
-    background: transparent;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
-  .export-btn:hover { background: var(--accent); color: #0c0c0e; }
-
+@media(max-width:600px){main{padding:1rem}.bl{width:110px;font-size:10px}.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-tag">Survey Analysis Report</div>
+  <div class="htag">Survey Analysis Report</div>
   <h1>Floyd <span>Concept</span> Testing</h1>
-  <div class="header-meta">
+  <div class="hmeta">
     <div><strong>5</strong> concepts evaluated</div>
     <div><strong>71–80</strong> respondents per concept</div>
     <div><strong>124</strong> overall Q respondents</div>
@@ -442,852 +102,530 @@
 </header>
 
 <nav>
-  <button class="nav-btn active" onclick="show('morning', this)">Morning Routine</button>
-  <button class="nav-btn" onclick="show('docdig', this)">Document Digitizer</button>
-  <button class="nav-btn" onclick="show('lang', this)">Language Tutor</button>
-  <button class="nav-btn" onclick="show('grocery', this)">Grocery & Meal Prep</button>
-  <button class="nav-btn" onclick="show('work', this)">Work / School</button>
-  <button class="nav-btn" onclick="show('overall', this)">Overall Q</button>
-  <button class="nav-btn" onclick="show('comparison', this)">★ Comparison</button>
+  <button class="nb active" onclick="show('mr',this)">Morning Routine</button>
+  <button class="nb" onclick="show('dd',this)">Document Digitizer</button>
+  <button class="nb" onclick="show('lt',this)">Language Tutor</button>
+  <button class="nb" onclick="show('gm',this)">Grocery &amp; Meal Prep</button>
+  <button class="nb" onclick="show('ws',this)">Work / School</button>
+  <button class="nb" onclick="show('ov',this)">Overall Q</button>
+  <button class="nb" onclick="show('cmp',this)">★ Comparison</button>
 </nav>
 
 <main>
 
-  <!-- ============ MORNING ROUTINE ============ -->
-  <div class="section active" id="morning">
-    <div class="section-header">
-      <div class="section-title">Morning Routine</div>
-      <div class="n-badge">n = 71</div>
-    </div>
-    <div class="grid">
-      <div class="card">
-        <div class="card-title">Overall relevance to you / your household</div>
-        <div id="mr_rel"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How big a challenge is this currently?</div>
-        <div id="mr_chal"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How much of an improvement using Floyd vs. today?</div>
-        <div id="mr_imp"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How much do you like what you saw in the video?</div>
-        <div id="mr_like"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How helpful would this type of assistance be day-to-day?</div>
-        <div id="mr_help"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How excited does this video make you feel about Floyd?</div>
-        <div id="mr_exc"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How likely would you be to use Floyd in this way?</div>
-        <div id="mr_likely"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Is Floyd someone you'd want to interact with in your home?</div>
-        <div id="mr_who"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Agreement statements — 1 (strongly disagree) to 5 (strongly agree)</div>
-      <div id="mr_agree"></div>
-    </div>
-    <div class="sub-heading" style="margin-top:1.5rem">Q12 — Floyd personality / style rating (1=not at all, 5=extremely)</div>
-    <div class="traits-grid" id="mr_traits"></div>
-
+<!-- ===== MORNING ROUTINE ===== -->
+<div class="sec active" id="mr">
+  <div class="sec-hdr"><div class="sec-title">Morning Routine</div><div class="nbadge">n = 71</div></div>
+  <div class="grid">
+    <div class="card"><div class="ctitle">Overall relevance to your household</div><div id="mr_rel"></div></div>
+    <div class="card"><div class="ctitle">How big a challenge is this currently?</div><div id="mr_chal"></div></div>
+    <div class="card"><div class="ctitle">Improvement using Floyd vs. today</div><div id="mr_imp"></div></div>
+    <div class="card"><div class="ctitle">How much do you like what you saw?</div><div id="mr_like"></div></div>
+    <div class="card"><div class="ctitle">How helpful would Floyd be day-to-day?</div><div id="mr_help"></div></div>
+    <div class="card"><div class="ctitle">How excited does this make you feel about Floyd?</div><div id="mr_exc"></div></div>
+    <div class="card"><div class="ctitle">How likely would you be to use Floyd this way?</div><div id="mr_likely"></div></div>
+    <div class="card"><div class="ctitle">Is Floyd someone you'd want in your home?</div><div id="mr_who"></div></div>
   </div>
-
-  <!-- ============ DOCUMENT DIGITIZER ============ -->
-  <div class="section" id="docdig">
-    <div class="section-header">
-      <div class="section-title">Document Digitizer</div>
-      <div class="n-badge">n = 71</div>
-    </div>
-    <div class="grid">
-      <div class="card">
-        <div class="card-title">Overall relevance to you / your household</div>
-        <div id="dd_rel"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How big a challenge is this currently?</div>
-        <div id="dd_chal"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How much of an improvement using Floyd vs. today?</div>
-        <div id="dd_imp"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How much do you like what you saw in the video?</div>
-        <div id="dd_like"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How helpful would this type of assistance be day-to-day?</div>
-        <div id="dd_help"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How excited does this video make you feel about Floyd?</div>
-        <div id="dd_exc"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How likely would you be to use Floyd in this way?</div>
-        <div id="dd_likely"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Is Floyd someone you'd want to interact with in your home?</div>
-        <div id="dd_who"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Agreement statements — 1 (strongly disagree) to 5 (strongly agree)</div>
-      <div id="dd_agree"></div>
-    </div>
-    <div class="sub-heading" style="margin-top:1.5rem">Q12 — Floyd personality / style rating (1=not at all, 5=extremely)</div>
-    <div class="traits-grid" id="dd_traits"></div>
-
+  <div class="card">
+    <div class="ctitle">Agreement statements (1 = strongly disagree → 5 = strongly agree)</div>
+    <div id="mr_agree"></div>
   </div>
+  <div class="sub-hdr">Q12 — Floyd personality / style rating (1 = not at all → 5 = extremely)</div>
+  <div class="traits-grid" id="mr_traits"></div>
+</div>
 
-  <!-- ============ LANGUAGE TUTOR ============ -->
-  <div class="section" id="lang">
-    <div class="section-header">
-      <div class="section-title">Language Tutor</div>
-      <div class="n-badge">n = 72</div>
-    </div>
-    <div class="grid">
-      <div class="card">
-        <div class="card-title">Overall relevance to you / your household</div>
-        <div id="lt_rel"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How big a challenge is this currently?</div>
-        <div id="lt_chal"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How much of an improvement using Floyd vs. today?</div>
-        <div id="lt_imp"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How much do you like what you saw in the video?</div>
-        <div id="lt_like"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How helpful would this type of assistance be day-to-day?</div>
-        <div id="lt_help"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How excited does this video make you feel about Floyd?</div>
-        <div id="lt_exc"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How likely would you be to use Floyd in this way?</div>
-        <div id="lt_likely"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Is Floyd someone you'd want to interact with in your home?</div>
-        <div id="lt_who"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Agreement statements — 1 (strongly disagree) to 5 (strongly agree)</div>
-      <div id="lt_agree"></div>
-    </div>
-    <div class="sub-heading" style="margin-top:1.5rem">Q12 — Floyd personality / style rating (1=not at all, 5=extremely)</div>
-    <div class="traits-grid" id="lt_traits"></div>
-
+<!-- ===== DOCUMENT DIGITIZER ===== -->
+<div class="sec" id="dd">
+  <div class="sec-hdr"><div class="sec-title">Document Digitizer</div><div class="nbadge">n = 71</div></div>
+  <div class="grid">
+    <div class="card"><div class="ctitle">Overall relevance to your household</div><div id="dd_rel"></div></div>
+    <div class="card"><div class="ctitle">How big a challenge is this currently?</div><div id="dd_chal"></div></div>
+    <div class="card"><div class="ctitle">Improvement using Floyd vs. today</div><div id="dd_imp"></div></div>
+    <div class="card"><div class="ctitle">How much do you like what you saw?</div><div id="dd_like"></div></div>
+    <div class="card"><div class="ctitle">How helpful would Floyd be day-to-day?</div><div id="dd_help"></div></div>
+    <div class="card"><div class="ctitle">How excited does this make you feel about Floyd?</div><div id="dd_exc"></div></div>
+    <div class="card"><div class="ctitle">How likely would you be to use Floyd this way?</div><div id="dd_likely"></div></div>
+    <div class="card"><div class="ctitle">Is Floyd someone you'd want in your home?</div><div id="dd_who"></div></div>
   </div>
-
-  <!-- ============ GROCERY & MEAL PREP ============ -->
-  <div class="section" id="grocery">
-    <div class="section-header">
-      <div class="section-title">Grocery & Meal Prep Assistant</div>
-      <div class="n-badge">n = 76</div>
-    </div>
-    <div class="grid">
-      <div class="card">
-        <div class="card-title">Overall relevance to you / your household</div>
-        <div id="gm_rel"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How big a challenge is this currently?</div>
-        <div id="gm_chal"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How much of an improvement using Floyd vs. today?</div>
-        <div id="gm_imp"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How much do you like what you saw in the video?</div>
-        <div id="gm_like"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How helpful would this type of assistance be day-to-day?</div>
-        <div id="gm_help"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How excited does this video make you feel about Floyd?</div>
-        <div id="gm_exc"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How likely would you be to use Floyd in this way?</div>
-        <div id="gm_likely"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Is Floyd someone you'd want to interact with in your home?</div>
-        <div id="gm_who"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Agreement statements — 1 (strongly disagree) to 5 (strongly agree)</div>
-      <div id="gm_agree"></div>
-    </div>
-    <div class="sub-heading" style="margin-top:1.5rem">Q12 — Floyd personality / style rating (1=not at all, 5=extremely)</div>
-    <div class="traits-grid" id="gm_traits"></div>
-
+  <div class="card">
+    <div class="ctitle">Agreement statements (1 = strongly disagree → 5 = strongly agree)</div>
+    <div id="dd_agree"></div>
   </div>
+  <div class="sub-hdr">Q12 — Floyd personality / style rating (1 = not at all → 5 = extremely)</div>
+  <div class="traits-grid" id="dd_traits"></div>
+</div>
 
-  <!-- ============ WORK / SCHOOL ============ -->
-  <div class="section" id="work">
-    <div class="section-header">
-      <div class="section-title">Work / School Assistant</div>
-      <div class="n-badge">n = 80</div>
-    </div>
-    <div class="grid">
-      <div class="card">
-        <div class="card-title">Overall relevance to you / your household</div>
-        <div id="ws_rel"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How big a challenge is this currently?</div>
-        <div id="ws_chal"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How much of an improvement using Floyd vs. today?</div>
-        <div id="ws_imp"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How much do you like what you saw in the video?</div>
-        <div id="ws_like"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How helpful would this type of assistance be day-to-day?</div>
-        <div id="ws_help"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How excited does this video make you feel about Floyd?</div>
-        <div id="ws_exc"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">How likely would you be to use Floyd in this way?</div>
-        <div id="ws_likely"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Is Floyd someone you'd want to interact with in your home?</div>
-        <div id="ws_who"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Agreement statements — 1 (strongly disagree) to 5 (strongly agree)</div>
-      <div id="ws_agree"></div>
-    </div>
-    <div class="sub-heading" style="margin-top:1.5rem">Q12 — Floyd personality / style rating (1=not at all, 5=extremely)</div>
-    <div class="traits-grid" id="ws_traits"></div>
-
+<!-- ===== LANGUAGE TUTOR ===== -->
+<div class="sec" id="lt">
+  <div class="sec-hdr"><div class="sec-title">Language Tutor</div><div class="nbadge">n = 72</div></div>
+  <div class="grid">
+    <div class="card"><div class="ctitle">Overall relevance to your household</div><div id="lt_rel"></div></div>
+    <div class="card"><div class="ctitle">How big a challenge is this currently?</div><div id="lt_chal"></div></div>
+    <div class="card"><div class="ctitle">Improvement using Floyd vs. today</div><div id="lt_imp"></div></div>
+    <div class="card"><div class="ctitle">How much do you like what you saw?</div><div id="lt_like"></div></div>
+    <div class="card"><div class="ctitle">How helpful would Floyd be day-to-day?</div><div id="lt_help"></div></div>
+    <div class="card"><div class="ctitle">How excited does this make you feel about Floyd?</div><div id="lt_exc"></div></div>
+    <div class="card"><div class="ctitle">How likely would you be to use Floyd this way?</div><div id="lt_likely"></div></div>
+    <div class="card"><div class="ctitle">Is Floyd someone you'd want in your home?</div><div id="lt_who"></div></div>
   </div>
-
-  <!-- ============ OVERALL ============ -->
-  <div class="section" id="overall">
-    <div class="section-header">
-      <div class="section-title">Overall Question</div>
-      <div class="n-badge">n = 124</div>
-    </div>
-    <div class="card" style="max-width:560px;">
-      <div class="card-title">Would you prefer Floyd have the same personality across tasks, or show up differently in different scenarios?</div>
-      <div id="ov_pref"></div>
-    </div>
+  <div class="card">
+    <div class="ctitle">Agreement statements (1 = strongly disagree → 5 = strongly agree)</div>
+    <div id="lt_agree"></div>
   </div>
+  <div class="sub-hdr">Q12 — Floyd personality / style rating (1 = not at all → 5 = extremely)</div>
+  <div class="traits-grid" id="lt_traits"></div>
+</div>
 
-  <!-- ============ COMPARISON ============ -->
-  <div class="section" id="comparison">
-    <div class="section-header">
-      <div class="section-title">Cross-Concept Comparison</div>
-      <div class="n-badge">all 5 concepts</div>
-    </div>
-    <div style="display:flex;gap:8px;margin-bottom:2rem;flex-wrap:wrap;align-items:center;justify-content:space-between;">
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="view-btn active" id="btn-top1" onclick="switchView('top1')">Top response only</button>
-        <button class="view-btn" id="btn-top2" onclick="switchView('top2')">Top 2 responses combined</button>
-      </div>
-      <button class="export-btn" onclick="exportToCSV()">↓ Export to CSV</button>
-    </div>
-    <div id="comp-top1"><div id="comp1_content"></div></div>
-    <div id="comp-top2" style="display:none"><div id="comp2_content"></div></div>
+<!-- ===== GROCERY & MEAL PREP ===== -->
+<div class="sec" id="gm">
+  <div class="sec-hdr"><div class="sec-title">Grocery &amp; Meal Prep Assistant</div><div class="nbadge">n = 76</div></div>
+  <div class="grid">
+    <div class="card"><div class="ctitle">Overall relevance to your household</div><div id="gm_rel"></div></div>
+    <div class="card"><div class="ctitle">How big a challenge is this currently?</div><div id="gm_chal"></div></div>
+    <div class="card"><div class="ctitle">Improvement using Floyd vs. today</div><div id="gm_imp"></div></div>
+    <div class="card"><div class="ctitle">How much do you like what you saw?</div><div id="gm_like"></div></div>
+    <div class="card"><div class="ctitle">How helpful would Floyd be day-to-day?</div><div id="gm_help"></div></div>
+    <div class="card"><div class="ctitle">How excited does this make you feel about Floyd?</div><div id="gm_exc"></div></div>
+    <div class="card"><div class="ctitle">How likely would you be to use Floyd this way?</div><div id="gm_likely"></div></div>
+    <div class="card"><div class="ctitle">Is Floyd someone you'd want in your home?</div><div id="gm_who"></div></div>
   </div>
+  <div class="card">
+    <div class="ctitle">Agreement statements (1 = strongly disagree → 5 = strongly agree)</div>
+    <div id="gm_agree"></div>
+  </div>
+  <div class="sub-hdr">Q12 — Floyd personality / style rating (1 = not at all → 5 = extremely)</div>
+  <div class="traits-grid" id="gm_traits"></div>
+</div>
 
+<!-- ===== WORK / SCHOOL ===== -->
+<div class="sec" id="ws">
+  <div class="sec-hdr"><div class="sec-title">Work / School Assistant</div><div class="nbadge">n = 80</div></div>
+  <div class="grid">
+    <div class="card"><div class="ctitle">Overall relevance to your household</div><div id="ws_rel"></div></div>
+    <div class="card"><div class="ctitle">How big a challenge is this currently?</div><div id="ws_chal"></div></div>
+    <div class="card"><div class="ctitle">Improvement using Floyd vs. today</div><div id="ws_imp"></div></div>
+    <div class="card"><div class="ctitle">How much do you like what you saw?</div><div id="ws_like"></div></div>
+    <div class="card"><div class="ctitle">How helpful would Floyd be day-to-day?</div><div id="ws_help"></div></div>
+    <div class="card"><div class="ctitle">How excited does this make you feel about Floyd?</div><div id="ws_exc"></div></div>
+    <div class="card"><div class="ctitle">How likely would you be to use Floyd this way?</div><div id="ws_likely"></div></div>
+    <div class="card"><div class="ctitle">Is Floyd someone you'd want in your home?</div><div id="ws_who"></div></div>
+  </div>
+  <div class="card">
+    <div class="ctitle">Agreement statements (1 = strongly disagree → 5 = strongly agree)</div>
+    <div id="ws_agree"></div>
+  </div>
+  <div class="sub-hdr">Q12 — Floyd personality / style rating (1 = not at all → 5 = extremely)</div>
+  <div class="traits-grid" id="ws_traits"></div>
+</div>
+
+<!-- ===== OVERALL Q ===== -->
+<div class="sec" id="ov">
+  <div class="sec-hdr"><div class="sec-title">Overall Question</div><div class="nbadge">n = 124</div></div>
+  <div class="card" style="max-width:500px">
+    <div class="ctitle">Would you prefer Floyd have the same personality across tasks, or show up differently in different scenarios?</div>
+    <div id="ov_pref"></div>
+  </div>
+</div>
+
+<!-- ===== COMPARISON ===== -->
+<div class="sec" id="cmp">
+  <div class="sec-hdr"><div class="sec-title">Cross-Concept Comparison</div><div class="nbadge">all 5 concepts</div></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:1.5rem">
+    <div class="view-btns">
+      <button class="vbtn active" id="btn1" onclick="switchView('top1')">Top box only</button>
+      <button class="vbtn" id="btn2" onclick="switchView('top2')">Top 2 box combined</button>
+    </div>
+    <button class="exp-btn" onclick="exportCSV()">↓ Export CSV</button>
+  </div>
+  <div id="cmp_top1"></div>
+  <div id="cmp_top2" style="display:none"></div>
+</div>
 
 </main>
 
 <script>
+// ── NAV ──────────────────────────────────────────────────────────────────
 function show(id, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
 }
 
-// Color maps
+// ── COLORS ───────────────────────────────────────────────────────────────
 const C = {
   pos1:'#4ade80', pos2:'#86efac', pos3:'#bbf7d0',
   neu:'#6b7280',
   neg1:'#f87171', neg2:'#fca5a5', neg3:'#fecaca',
   blue1:'#60a5fa', blue2:'#93c5fd',
-  purple1:'#a78bfa', purple2:'#c4b5fd',
-  amber:'#fbbf24',
-  accent:'#c8f060', accent2:'#60c8f0',
+  pur1:'#a78bfa', pur2:'#c4b5fd',
+  acc:'#c8f060',
 };
+const agreeC = ['#f87171','#fca5a5','#6b7280','#93c5fd','#60a5fa'];
+const traitC  = ['#f87171','#fca5a5','#6b7280','#93c5fd','#60a5fa'];
+const traitDots = ['#c8f060','#60c8f0','#f060c8','#fbbf24','#a78bfa'];
 
-const agreeColors = ['#f87171','#fca5a5','#6b7280','#93c5fd','#60a5fa'];
+function relC(l){
+  if(l.includes('Extremely')) return C.pos1;
+  if(l.includes('Very r'))    return C.pos2;
+  if(l.includes('Somewhat r'))return C.pos3;
+  if(l.includes('Not relevant at')) return C.neg1;
+  if(l.includes('Not relevant'))    return C.neg2;
+  return C.neu;
+}
+function chalC(l){
+  if(l.includes('Huge'))              return C.neg1;
+  if(l.includes('Somewhat of a'))     return C.neg2;
+  if(l.includes('middle'))            return C.neu;
+  if(l.includes('Not really'))        return C.pos3;
+  if(l.includes('Not a challenge'))   return C.pos1;
+  return C.neu;
+}
+function impC(l){
+  if(l.includes('Huge imp'))          return C.pos1;
+  if(l.includes('Somewhat of an imp'))return C.pos2;
+  if(l.includes('middle'))            return C.neu;
+  if(l.includes('Not really much of an imp')) return C.neg2;
+  if(l.includes('No improvement'))    return C.neg1;
+  return C.neu;
+}
+function likeC(l){
+  if(l.includes('Love'))   return C.pur1;
+  if(l.includes('Like it'))return C.pur2;
+  if(l.includes('Neutral'))return C.neu;
+  if(l.includes('care for'))return C.neg2;
+  if(l.includes('Hate'))   return C.neg1;
+  return C.neu;
+}
+function helpC(l){
+  if(l.includes('Very helpful'))      return C.pos1;
+  if(l.includes('Somewhat helpful'))  return C.pos2;
+  if(l.includes('Neutral'))           return C.neu;
+  if(l.includes('Not particularly'))  return C.neg2;
+  if(l.includes('Not helpful at all'))return C.neg1;
+  return C.neu;
+}
+function excC(l){
+  if(l.includes('Very Excited'))         return C.blue1;
+  if(l.includes('Somewhat excited'))     return C.blue2;
+  if(l.includes('Neutral'))             return C.neu;
+  if(l.includes('Not particularly exc')) return C.neg2;
+  if(l.includes('Not excited at all'))   return C.neg1;
+  return C.neu;
+}
+function likelyC(l){
+  if(l.includes('Very likely'))      return C.pos1;
+  if(l.includes('Somewhat likely'))  return C.pos2;
+  if(l.includes('Neutral'))          return C.neu;
+  if(l.includes('Somewhat unlikely'))return C.neg2;
+  if(l.includes('Very unlikely'))    return C.neg1;
+  return C.neu;
+}
+function whoC(l){
+  if(l.includes('Yes, definitely'))      return C.acc;
+  if(l.includes('Pretty close'))         return C.pos2;
+  if(l.includes('Maybe'))                return C.neu;
+  if(l.includes('reservations'))         return C.neg2;
+  if(l.includes('not at all'))           return C.neg1;
+  return C.neu;
+}
+function ratingC(l){
+  if(l==='Rating 5') return C.blue1;
+  if(l==='Rating 4') return C.blue2;
+  if(l==='Rating 3') return C.neu;
+  if(l==='Rating 2') return C.neg2;
+  if(l==='Rating 1') return C.neg1;
+  return C.neu;
+}
+function ovC(l){ return l.includes('Different') ? C.acc : C.blue1; }
 
-function relC(n) {
-  if(n.includes('Extremely')) return C.pos1;
-  if(n.includes('Very r')) return C.pos2;
-  if(n.includes('Somewhat')) return C.pos3;
-  if(n.includes('Not relevant at all')) return C.neg1;
-  if(n.includes('Not relevant')) return C.neg2;
-  return C.neu;
-}
-function chalC(n) {
-  if(n.includes('Huge')) return C.neg1;
-  if(n.includes('Somewhat of a')) return C.neg2;
-  if(n.includes('middle')) return C.neu;
-  if(n.includes('Not really')) return C.pos3;
-  if(n.includes('Not a challenge')) return C.pos1;
-  return C.neu;
-}
-function impC(n) {
-  if(n.includes('Huge improvement')) return C.pos1;
-  if(n.includes('Somewhat of an imp')) return C.pos2;
-  if(n.includes('middle')) return C.neu;
-  if(n.includes('Not really much of an imp')) return C.neg2;
-  if(n.includes('No improvement')) return C.neg1;
-  return C.neu;
-}
-function likeC(n) {
-  if(n.includes('Love')) return C.purple1;
-  if(n.includes('Like it')) return C.purple2;
-  if(n.includes('Neutral')) return C.neu;
-  if(n.includes("care for")) return C.neg2;
-  if(n.includes('Hate')) return C.neg1;
-  return C.neu;
-}
-function helpC(n) {
-  if(n.includes('Very helpful')) return C.pos1;
-  if(n.includes('Somewhat helpful')) return C.pos2;
-  if(n.includes('Neutral')) return C.neu;
-  if(n.includes('Not particularly')) return C.neg2;
-  if(n.includes('Not helpful')) return C.neg1;
-  return C.neu;
-}
-function excC(n) {
-  if(n.includes('Very Excited')||n.includes('Very excited')) return C.blue1;
-  if(n.includes('Somewhat excited')) return C.blue2;
-  if(n.includes('Neutral')) return C.neu;
-  if(n.includes('Not particularly')) return C.neg2;
-  if(n.includes('Not excited')) return C.neg1;
-  return C.neu;
-}
-function likelyC(n) {
-  if(n.includes('Very likely')) return C.pos1;
-  if(n.includes('Somewhat likely')) return C.pos2;
-  if(n.includes('Neutral')) return C.neu;
-  if(n.includes('Somewhat unlikely')) return C.neg2;
-  if(n.includes('Very unlikely')) return C.neg1;
-  return C.neu;
-}
-function whoC(n) {
-  if(n.includes('Yes, definitely')) return C.accent;
-  if(n.includes('Pretty close')) return C.pos2;
-  if(n.includes('Maybe')) return C.neu;
-  if(n.includes('reservations')) return C.neg2;
-  if(n.includes('not at all')) return C.neg1;
-  return C.neu;
-}
-function ovC(n) {
-  return n.includes('Different') ? C.accent : C.blue1;
-}
-
-function bars(id, data, colorFn) {
+// ── BAR RENDERER ─────────────────────────────────────────────────────────
+function bars(id, rows, colorFn) {
   const el = document.getElementById(id);
-  if(!el) return;
-  el.innerHTML = data.map(([name, pct]) => {
-    const color = colorFn(name);
-    const numPct = parseFloat(pct);
-    const w = Math.max(numPct, 1);
-    const showIn = numPct >= 14;
-    const display = Math.round(numPct) + '%';
-    return `<div class="bar-row">
-      <div class="bar-label">${name}</div>
-      <div class="bar-track">
-        <div class="bar-fill" style="width:${w}%;background:${color}">
-          ${showIn ? `<span class="bar-val">${display}</span>` : ''}
-        </div>
-      </div>
-      ${!showIn ? `<span class="bar-val-out">${display}</span>` : ''}
+  if (!el) return;
+  el.innerHTML = rows.map(r => {
+    const w = Math.max(r.pct, 1);
+    const showIn = r.pct >= 14;
+    const col = colorFn(r.label);
+    return `<div class="br">
+      <div class="bl">${r.label}</div>
+      <div class="bt"><div class="bf" style="width:${w}%;background:${col}">
+        ${showIn ? `<span class="bv">${r.pct}%</span>` : ''}
+      </div></div>
+      ${!showIn ? `<span class="bvo">${r.pct}%</span>` : ''}
     </div>`;
   }).join('');
 }
 
-function agree(id, rows) {
+// ── AGREE STACKED ────────────────────────────────────────────────────────
+function agree(id, rows4) {
   const el = document.getElementById(id);
-  if(!el) return;
-  const legend = `<div class="agree-legend">
-    ${['1 — Strongly disagree','2','3 — Neutral','4','5 — Strongly agree'].map((l,i)=>
-      `<span><span class="legend-dot" style="background:${agreeColors[i]}"></span>${l}</span>`
-    ).join('')}
-  </div>`;
-  el.innerHTML = rows.map(({label, data}) => {
-    const total = data.reduce((a,b)=>a+b,0);
-    const segs = data.map((v,i) => {
-      const pct = total ? (v/total*100) : 0;
-      const show = pct >= 10;
-      return `<div class="stack-seg" style="flex:${pct};background:${agreeColors[i]}">${show ? Math.round(pct)+'%' : ''}</div>`;
+  if (!el) return;
+  const qs = [
+    {lbl:'Saves me a lot of time', rows: rows4[0]},
+    {lbl:'Home would run more smoothly', rows: rows4[1]},
+    {lbl:'I trust my data would be used responsibly', rows: rows4[2]},
+    {lbl:'Improvement over existing tech', rows: rows4[3]},
+  ];
+  const legend = `<div class="ag-leg">${['1 — Disagree','2','3 — Neutral','4','5 — Agree'].map((l,i)=>`<span><span class="dot" style="background:${agreeC[i]}"></span>${l}</span>`).join('')}</div>`;
+  el.innerHTML = qs.map(q => {
+    const total = q.rows.reduce((a,b)=>a+b.count,0);
+    const segs = q.rows.map((r,i)=>{
+      const flex = total ? (r.count/total*100) : 0;
+      const show = flex >= 10;
+      return `<div class="ss" style="flex:${Math.max(flex,.3)};background:${agreeC[i]}">${show ? r.pct+'%' : ''}</div>`;
     }).join('');
-    return `<div class="agree-row">
-      <div class="agree-label">${label}</div>
-      <div class="stacked-bar">${segs}</div>
-    </div>`;
+    return `<div class="agree-row"><div class="agree-lbl">${q.lbl}</div><div class="stk">${segs}</div></div>`;
   }).join('') + legend;
 }
 
-// ---- MORNING ROUTINE ----
-bars('mr_rel', [
-  ['Extremely relevant','29.6'],['Very relevant','25.4'],['Somewhat relevant','28.2'],
-  ['Not relevant','14.1'],['Not relevant at all','2.8']
-], relC);
-bars('mr_chal', [
-  ['Somewhat of a challenge','29.6'],['Somewhere in the middle','29.6'],
-  ['Huge challenge','14.1'],['Not really much of a challenge','14.1'],['Not a challenge at all','12.7']
-], chalC);
-bars('mr_imp', [
-  ['Huge improvement','40.8'],['Somewhat of an improvement','25.4'],
-  ['Somewhere in the middle','16.9'],['Not really much of an improvement','9.9'],['No improvement at all','7.0']
-], impC);
-bars('mr_like', [
-  ['Love it','40.8'],['Like it','36.6'],['Neutral','15.5'],["Don't really care for it",'5.6'],['Hate it','1.4']
-], likeC);
-bars('mr_help', [
-  ['Very helpful','40.8'],['Somewhat helpful','39.4'],['Not particularly helpful','8.5'],
-  ['Neutral','5.6'],['Not helpful at all','5.6']
-], helpC);
-bars('mr_exc', [
-  ['Very Excited','42.3'],['Somewhat excited','36.6'],['Neutral','8.5'],
-  ['Not particularly excited','8.5'],['Not excited at all','4.2']
-], excC);
-bars('mr_likely', [
-  ['Very likely','46.5'],['Somewhat likely','26.8'],['Somewhat unlikely','14.1'],
-  ['Neutral','5.6'],['Very unlikely','7.0']
-], likelyC);
-bars('mr_who', [
-  ['Yes, definitely','39.4'],['Pretty close','31.0'],['Maybe, it depends','14.1'],
-  ['I have some reservations','8.5'],['No - not at all!','7.0']
-], whoC);
-agree('mr_agree', [
-  {label:'Using Floyd in this way is likely to save me a lot of time', data:[6,5,14,18,28]},
-  {label:'My home would run more smoothly if I was able to use Floyd in this way', data:[5,8,9,22,27]},
-  {label:'I expect Floyd would need access to my personal data to help in this way, and I trust that my data would be used responsibly', data:[5,4,19,24,19]},
-  {label:'This is an improvement over existing tech or solutions that could be used in this way', data:[2,8,7,23,31]},
-]);
+// ── TRAITS ───────────────────────────────────────────────────────────────
+function traits(id, traitMap) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const names = ['Calm','Competent','Efficient','Supportive','Emotionally aware'];
+  el.innerHTML = names.map((name, ti) => {
+    const d = traitMap[name];
+    const segs = d.rows.map((r,i)=>{
+      const flex = Math.max(r.pct,.3);
+      const show = r.pct >= 10;
+      return `<div class="ss" style="flex:${flex};background:${traitC[i]}">${show ? r.pct+'%' : ''}</div>`;
+    }).join('');
+    const top2 = d.rows[0].pct + d.rows[1].pct;
+    const avg = ((d.rows[0].count*5+d.rows[1].count*4+d.rows[2].count*3+d.rows[3].count*2+d.rows[4].count*1)/d.n).toFixed(1);
+    return `<div class="tcrd">
+      <div class="tname"><span class="tdot" style="background:${traitDots[ti]}"></span>${name}</div>
+      <div class="tstk">${segs}</div>
+      <div class="tsum"><span>Top 2 box: <strong>${top2}%</strong></span><span>Avg: <strong>${avg}</strong></span></div>
+    </div>`;
+  }).join('');
+}
 
-// ---- DOCUMENT DIGITIZER ----
-bars('dd_chal', [
-  ['Somewhere in the middle','33.8'],['Somewhat of a challenge','23.9'],
-  ['Not a challenge at all','18.3'],['Not really much of a challenge','15.5'],['Huge challenge','8.5']
-], chalC);
-bars('dd_rel', [
-  ['Very relevant','36.6'],['Somewhat relevant','32.4'],['Extremely relevant','16.9'],
-  ['Not relevant','12.7'],['Not relevant at all','1.4']
-], relC);
-bars('dd_imp', [
-  ['Huge improvement','43.7'],['Somewhat of an improvement','25.4'],['Not really much of an improvement','15.5'],
-  ['Somewhere in the middle','8.5'],['No improvement at all','7.0']
-], impC);
-bars('dd_like', [
-  ['Like it','45.1'],['Love it','32.4'],['Neutral','11.3'],["Don't really care for it",'11.3']
-], likeC);
-bars('dd_help', [
-  ['Very helpful','43.7'],['Somewhat helpful','26.8'],['Neutral','12.7'],
-  ['Not particularly helpful','12.7'],['Not helpful at all','4.2']
-], helpC);
-bars('dd_exc', [
-  ['Very Excited','39.4'],['Somewhat excited','29.6'],['Neutral','16.9'],
-  ['Not particularly excited','11.3'],['Not excited at all','2.8']
-], excC);
-bars('dd_likely', [
-  ['Very likely','45.1'],['Somewhat likely','23.9'],['Somewhat unlikely','12.7'],
-  ['Neutral','9.9'],['Very unlikely','8.5']
-], likelyC);
-bars('dd_who', [
-  ['Yes, definitely','40.8'],['Pretty close','25.4'],['Maybe, it depends','23.9'],
-  ['I have some reservations','9.9']
-], whoC);
-agree('dd_agree', [
-  {label:'Using Floyd in this way is likely to save me a lot of time', data:[3,8,14,15,31]},
-  {label:'My home would run more smoothly if I was able to use Floyd in this way', data:[3,7,22,17,22]},
-  {label:'I expect Floyd would need access to my personal data to help in this way, and I trust that my data would be used responsibly', data:[3,11,20,20,17]},
-  {label:'This is an improvement over existing tech or solutions that could be used in this way', data:[0,7,11,28,25]},
-]);
-
-// ---- LANGUAGE TUTOR ----
-bars('lt_rel', [
-  ['Somewhat relevant','37.5'],['Extremely relevant','27.8'],['Very relevant','12.5'],
-  ['Not relevant','11.1'],['Not relevant at all','11.1']
-], relC);
-bars('lt_chal', [
-  ['Somewhat of a challenge','30.6'],['Somewhere in the middle','26.4'],
-  ['Not really much of a challenge','18.1'],['Not a challenge at all','15.3'],['Huge challenge','9.7']
-], chalC);
-bars('lt_imp', [
-  ['Huge improvement','47.2'],['Somewhat of an improvement','23.6'],['Somewhere in the middle','13.9'],
-  ['No improvement at all','8.3'],['Not really much of an improvement','6.9']
-], impC);
-bars('lt_like', [
-  ['Love it','44.4'],['Like it','41.7'],["Don't really care for it",'9.7'],['Neutral','4.2']
-], likeC);
-bars('lt_help', [
-  ['Very helpful','45.8'],['Somewhat helpful','25.0'],['Neutral','15.3'],
-  ['Not particularly helpful','9.7'],['Not helpful at all','4.2']
-], helpC);
-bars('lt_exc', [
-  ['Very Excited','41.7'],['Somewhat excited','37.5'],['Neutral','9.7'],
-  ['Not excited at all','6.9'],['Not particularly excited','4.2']
-], excC);
-bars('lt_likely', [
-  ['Very likely','47.2'],['Somewhat likely','27.8'],['Neutral','11.1'],
-  ['Very unlikely','8.3'],['Somewhat unlikely','5.6']
-], likelyC);
-bars('lt_who', [
-  ['Yes, definitely','37.5'],['Pretty close','27.8'],['Maybe, it depends','20.8'],
-  ['I have some reservations','6.9'],['No - not at all!','6.9']
-], whoC);
-agree('lt_agree', [
-  {label:'Using Floyd in this way is likely to save me a lot of time', data:[6,13,11,18,24]},
-  {label:'My home would run more smoothly if I was able to use Floyd in this way', data:[10,7,19,17,19]},
-  {label:'I expect Floyd would need access to my personal data to help in this way, and I trust that my data would be used responsibly', data:[5,14,18,24,11]},
-  {label:'This is an improvement over existing tech or solutions that could be used in this way', data:[3,2,12,18,37]},
-]);
-
-// ---- GROCERY & MEAL PREP ----
-bars('gm_rel', [
-  ['Extremely relevant','38.2'],['Very relevant','27.6'],['Somewhat relevant','25.0'],
-  ['Not relevant','6.6'],['Not relevant at all','2.6']
-], relC);
-bars('gm_chal', [
-  ['Somewhat of a challenge','31.6'],['Somewhere in the middle','26.3'],
-  ['Not really much of a challenge','18.4'],['Huge challenge','14.5'],['Not a challenge at all','9.2']
-], chalC);
-bars('gm_imp', [
-  ['Huge improvement','50.0'],['Somewhat of an improvement','23.7'],['Somewhere in the middle','13.2'],
-  ['Not really much of an improvement','9.2'],['No improvement at all','3.9']
-], impC);
-bars('gm_like', [
-  ['Love it','48.7'],['Like it','34.2'],['Neutral','11.8'],
-  ["Don't really care for it",'3.9'],['Hate it','1.3']
-], likeC);
-bars('gm_help', [
-  ['Very helpful','53.9'],['Somewhat helpful','26.3'],['Neutral','9.2'],
-  ['Not particularly helpful','7.9'],['Not helpful at all','2.6']
-], helpC);
-bars('gm_exc', [
-  ['Very Excited','53.9'],['Somewhat excited','30.3'],['Neutral','6.6'],
-  ['Not particularly excited','5.3'],['Not excited at all','3.9']
-], excC);
-bars('gm_likely', [
-  ['Very likely','53.9'],['Somewhat likely','28.9'],['Somewhat unlikely','9.2'],
-  ['Neutral','5.3'],['Very unlikely','2.6']
-], likelyC);
-bars('gm_who', [
-  ['Yes, definitely','46.1'],['Pretty close','25.0'],['Maybe, it depends','17.1'],
-  ['I have some reservations','7.9'],['No - not at all!','3.9']
-], whoC);
-agree('gm_agree', [
-  {label:'Using Floyd in this way is likely to save me a lot of time', data:[3,9,8,19,37]},
-  {label:'My home would run more smoothly if I was able to use Floyd in this way', data:[3,6,11,26,30]},
-  {label:'I expect Floyd would need access to my personal data to help in this way, and I trust that my data would be used responsibly', data:[1,10,27,18,20]},
-  {label:'This is an improvement over existing tech or solutions that could be used in this way', data:[3,2,9,16,46]},
-]);
-
-// ---- WORK / SCHOOL ----
-bars('ws_rel', [
-  ['Somewhat relevant','40.0'],['Extremely relevant','18.8'],['Very relevant','18.8'],
-  ['Not relevant','13.8'],['Not relevant at all','8.8']
-], relC);
-bars('ws_chal', [
-  ['Not a challenge at all','20.0'],['Somewhere in the middle','22.5'],
-  ['Somewhat of a challenge','23.8'],['Not really much of a challenge','17.5'],['Huge challenge','16.2']
-], chalC);
-bars('ws_imp', [
-  ['Huge improvement','33.8'],['Somewhat of an improvement','27.5'],['Somewhere in the middle','20.0'],
-  ['No improvement at all','11.2'],['Not really much of an improvement','7.5']
-], impC);
-bars('ws_like', [
-  ['Love it','36.2'],['Like it','31.2'],['Neutral','22.5'],
-  ["Don't really care for it",'8.8'],['Hate it','1.2']
-], likeC);
-bars('ws_help', [
-  ['Very helpful','35.0'],['Somewhat helpful','28.7'],['Neutral','15.0'],
-  ['Not particularly helpful','12.5'],['Not helpful at all','8.8']
-], helpC);
-bars('ws_exc', [
-  ['Very Excited','36.2'],['Somewhat excited','28.7'],['Neutral','16.2'],
-  ['Not particularly excited','15.0'],['Not excited at all','3.8']
-], excC);
-bars('ws_likely', [
-  ['Very likely','40.0'],['Somewhat likely','21.2'],['Neutral','13.8'],
-  ['Very unlikely','13.8'],['Somewhat unlikely','11.2']
-], likelyC);
-bars('ws_who', [
-  ['Yes, definitely','35.0'],['Maybe, it depends','22.5'],['Pretty close','22.5'],
-  ['I have some reservations','16.2'],['No - not at all!','3.8']
-], whoC);
-agree('ws_agree', [
-  {label:'Using Floyd in this way is likely to save me a lot of time', data:[7,9,16,19,29]},
-  {label:'My home would run more smoothly if I was able to use Floyd in this way', data:[7,11,17,16,29]},
-  {label:'I expect Floyd would need access to my personal data to help in this way, and I trust that my data would be used responsibly', data:[4,6,24,25,21]},
-  {label:'This is an improvement over existing tech or solutions that could be used in this way', data:[4,10,8,24,34]},
-]);
-
-// ---- OVERALL ----
-bars('ov_pref', [
-  ['Differently for different scenarios','53.2'],
-  ['Same across tasks','46.8']
-], ovC);
-
-// ---- COMPARISON DATA ----
-const CONCEPTS = ['Morning Routine','Document Digitizer','Language Tutor','Grocery & Meal Prep','Work / School'];
-const compData = {
-  sections: [
-    {
-      title: 'Perception & Relevance',
-      questions: [
-        { q:'Relevance', top1_label:'Extremely relevant', top2_label:'Extremely + Very relevant',
-          top1:[29.6, 16.9, 27.8, 38.2, 18.8], top2:[55.0, 53.5, 40.3, 65.8, 37.6] },
-        { q:'Challenge level', top1_label:'Huge challenge', top2_label:'Huge + Somewhat of a challenge',
-          top1:[14.1, null, 9.7, 14.5, 16.2], top2:[43.7, null, 40.3, 46.1, 40.0] },
-        { q:'Improvement over current', top1_label:'Huge improvement', top2_label:'Huge + Somewhat of an improvement',
-          top1:[40.8, 43.7, 47.2, 50.0, 33.8], top2:[66.2, 69.1, 70.8, 73.7, 61.3] },
-      ]
-    },
-    {
-      title: 'Video Reaction',
-      questions: [
-        { q:'Like the video', top1_label:'Love it', top2_label:'Love it + Like it',
-          top1:[40.8, 32.4, 44.4, 48.7, 36.2], top2:[77.4, 77.5, 86.1, 82.9, 67.4] },
-        { q:'Helpfulness day-to-day', top1_label:'Very helpful', top2_label:'Very + Somewhat helpful',
-          top1:[40.8, 43.7, 45.8, 53.9, 35.0], top2:[80.2, 70.5, 70.8, 80.2, 63.7] },
-        { q:'Excitement about Floyd', top1_label:'Very Excited', top2_label:'Very Excited + Somewhat excited',
-          top1:[42.3, 39.4, 41.7, 53.9, 36.2], top2:[78.9, 69.0, 79.2, 84.2, 64.9] },
-        { q:'Likelihood to use Floyd', top1_label:'Very likely', top2_label:'Very + Somewhat likely',
-          top1:[46.5, 45.1, 47.2, 53.9, 40.0], top2:[73.3, 69.0, 75.0, 82.8, 61.2] },
-        { q:'Want Floyd in home', top1_label:'Yes, definitely', top2_label:'Yes, definitely + Pretty close',
-          top1:[39.4, 40.8, 37.5, 46.1, 35.0], top2:[70.4, 66.2, 65.3, 71.1, 57.5] },
-      ]
-    },
-    {
-      title: 'Agreement Statements (1–5 scale)',
-      questions: [
-        { q:'Saves me a lot of time', top1_label:'Rating 5 (Strongly agree)', top2_label:'Rating 4 + 5',
-          top1:[39.4, 43.7, 33.3, 48.7, 36.2], top2:[64.8, 64.8, 58.3, 73.7, 60.0] },
-        { q:'Home would run more smoothly', top1_label:'Rating 5 (Strongly agree)', top2_label:'Rating 4 + 5',
-          top1:[38.0, 31.0, 26.4, 39.5, 36.2], top2:[69.0, 54.9, 50.0, 73.7, 56.2] },
-        { q:'Trust my data used responsibly', top1_label:'Rating 5 (Strongly agree)', top2_label:'Rating 4 + 5',
-          top1:[26.8, 23.9, 15.3, 26.3, 26.2], top2:[60.6, 52.1, 48.6, 50.0, 57.4] },
-        { q:'Improvement over existing tech', top1_label:'Rating 5 (Strongly agree)', top2_label:'Rating 4 + 5',
-          top1:[43.7, 35.2, 51.4, 60.5, 42.5], top2:[76.1, 74.6, 76.4, 81.6, 72.5] },
-      ]
+// ── ALL DATA ─────────────────────────────────────────────────────────────
+const D = {
+  mr: {
+    rel:   [{label:'Extremely relevant',count:21,pct:30},{label:'Very relevant',count:18,pct:25},{label:'Somewhat relevant',count:20,pct:28},{label:'Not relevant',count:10,pct:14},{label:'Not relevant at all',count:2,pct:3}],
+    chal:  [{label:'Huge challenge',count:10,pct:14},{label:'Somewhat of a challenge',count:21,pct:30},{label:'Somewhere in the middle',count:21,pct:30},{label:'Not really much of a challenge',count:10,pct:14},{label:'Not a challenge at all',count:9,pct:13}],
+    imp:   [{label:'Huge improvement',count:29,pct:41},{label:'Somewhat of an improvement',count:18,pct:25},{label:'Somewhere in the middle',count:12,pct:17},{label:'Not really much of an improvement',count:7,pct:10},{label:'No improvement at all',count:5,pct:7}],
+    like:  [{label:'Love it',count:29,pct:41},{label:'Like it',count:26,pct:37},{label:'Neutral',count:11,pct:15},{label:"Don't really care for it",count:0,pct:0},{label:'Hate it',count:1,pct:1}],
+    help:  [{label:'Very helpful',count:29,pct:41},{label:'Somewhat helpful',count:28,pct:39},{label:'Neutral',count:4,pct:6},{label:'Not particularly helpful',count:6,pct:8},{label:'Not helpful at all',count:4,pct:6}],
+    exc:   [{label:'Very Excited',count:30,pct:42},{label:'Somewhat excited',count:26,pct:37},{label:'Neutral',count:6,pct:8},{label:'Not particularly excited',count:6,pct:8},{label:'Not excited at all',count:3,pct:4}],
+    likely:[{label:'Very likely',count:33,pct:46},{label:'Somewhat likely',count:19,pct:27},{label:'Neutral',count:4,pct:6},{label:'Somewhat unlikely',count:10,pct:14},{label:'Very unlikely',count:5,pct:7}],
+    who:   [{label:'Yes, definitely',count:28,pct:39},{label:'Pretty close',count:22,pct:31},{label:'Maybe, it depends',count:10,pct:14},{label:'I have some reservations',count:6,pct:8},{label:'No - not at all!',count:5,pct:7}],
+    agree: [
+      [{label:'Rating 5',count:28,pct:39},{label:'Rating 4',count:18,pct:25},{label:'Rating 3',count:14,pct:20},{label:'Rating 2',count:5,pct:7},{label:'Rating 1',count:6,pct:8}],
+      [{label:'Rating 5',count:27,pct:38},{label:'Rating 4',count:22,pct:31},{label:'Rating 3',count:9,pct:13},{label:'Rating 2',count:8,pct:11},{label:'Rating 1',count:5,pct:7}],
+      [{label:'Rating 5',count:19,pct:27},{label:'Rating 4',count:24,pct:34},{label:'Rating 3',count:19,pct:27},{label:'Rating 2',count:4,pct:6},{label:'Rating 1',count:5,pct:7}],
+      [{label:'Rating 5',count:31,pct:44},{label:'Rating 4',count:23,pct:32},{label:'Rating 3',count:7,pct:10},{label:'Rating 2',count:8,pct:11},{label:'Rating 1',count:2,pct:3}],
+    ],
+    q12: {
+      Calm:             {n:71,rows:[{label:'Rating 5',count:35,pct:49},{label:'Rating 4',count:26,pct:37},{label:'Rating 3',count:5,pct:7},{label:'Rating 2',count:4,pct:6},{label:'Rating 1',count:1,pct:1}]},
+      Competent:        {n:71,rows:[{label:'Rating 5',count:37,pct:52},{label:'Rating 4',count:26,pct:37},{label:'Rating 3',count:7,pct:10},{label:'Rating 2',count:1,pct:1},{label:'Rating 1',count:0,pct:0}]},
+      Efficient:        {n:71,rows:[{label:'Rating 5',count:36,pct:51},{label:'Rating 4',count:25,pct:35},{label:'Rating 3',count:7,pct:10},{label:'Rating 2',count:3,pct:4},{label:'Rating 1',count:0,pct:0}]},
+      Supportive:       {n:71,rows:[{label:'Rating 5',count:38,pct:54},{label:'Rating 4',count:23,pct:32},{label:'Rating 3',count:6,pct:8},{label:'Rating 2',count:3,pct:4},{label:'Rating 1',count:1,pct:1}]},
+      'Emotionally aware':{n:71,rows:[{label:'Rating 5',count:21,pct:30},{label:'Rating 4',count:26,pct:37},{label:'Rating 3',count:16,pct:23},{label:'Rating 2',count:8,pct:11},{label:'Rating 1',count:0,pct:0}]},
     }
-  ]
+  },
+  dd: {
+    rel:   [{label:'Extremely relevant',count:12,pct:17},{label:'Very relevant',count:26,pct:37},{label:'Somewhat relevant',count:23,pct:32},{label:'Not relevant',count:9,pct:13},{label:'Not relevant at all',count:1,pct:1}],
+    chal:  [{label:'Huge challenge',count:6,pct:8},{label:'Somewhat of a challenge',count:17,pct:24},{label:'Somewhere in the middle',count:24,pct:34},{label:'Not really much of a challenge',count:11,pct:15},{label:'Not a challenge at all',count:13,pct:18}],
+    imp:   [{label:'Huge improvement',count:31,pct:44},{label:'Somewhat of an improvement',count:18,pct:25},{label:'Somewhere in the middle',count:6,pct:8},{label:'Not really much of an improvement',count:11,pct:15},{label:'No improvement at all',count:5,pct:7}],
+    like:  [{label:'Love it',count:23,pct:32},{label:'Like it',count:32,pct:45},{label:'Neutral',count:8,pct:11},{label:"Don't really care for it",count:0,pct:0},{label:'Hate it',count:0,pct:0}],
+    help:  [{label:'Very helpful',count:31,pct:44},{label:'Somewhat helpful',count:19,pct:27},{label:'Neutral',count:9,pct:13},{label:'Not particularly helpful',count:9,pct:13},{label:'Not helpful at all',count:3,pct:4}],
+    exc:   [{label:'Very Excited',count:28,pct:39},{label:'Somewhat excited',count:21,pct:30},{label:'Neutral',count:12,pct:17},{label:'Not particularly excited',count:8,pct:11},{label:'Not excited at all',count:2,pct:3}],
+    likely:[{label:'Very likely',count:32,pct:45},{label:'Somewhat likely',count:17,pct:24},{label:'Neutral',count:7,pct:10},{label:'Somewhat unlikely',count:9,pct:13},{label:'Very unlikely',count:6,pct:8}],
+    who:   [{label:'Yes, definitely',count:29,pct:41},{label:'Pretty close',count:18,pct:25},{label:'Maybe, it depends',count:17,pct:24},{label:'I have some reservations',count:7,pct:10},{label:'No - not at all!',count:0,pct:0}],
+    agree: [
+      [{label:'Rating 5',count:31,pct:44},{label:'Rating 4',count:15,pct:21},{label:'Rating 3',count:14,pct:20},{label:'Rating 2',count:8,pct:11},{label:'Rating 1',count:3,pct:4}],
+      [{label:'Rating 5',count:22,pct:31},{label:'Rating 4',count:17,pct:24},{label:'Rating 3',count:22,pct:31},{label:'Rating 2',count:7,pct:10},{label:'Rating 1',count:3,pct:4}],
+      [{label:'Rating 5',count:17,pct:24},{label:'Rating 4',count:20,pct:28},{label:'Rating 3',count:20,pct:28},{label:'Rating 2',count:11,pct:15},{label:'Rating 1',count:3,pct:4}],
+      [{label:'Rating 5',count:25,pct:35},{label:'Rating 4',count:28,pct:39},{label:'Rating 3',count:11,pct:15},{label:'Rating 2',count:7,pct:10},{label:'Rating 1',count:0,pct:0}],
+    ],
+    q12: {
+      Calm:             {n:71,rows:[{label:'Rating 5',count:37,pct:52},{label:'Rating 4',count:27,pct:38},{label:'Rating 3',count:2,pct:3},{label:'Rating 2',count:4,pct:6},{label:'Rating 1',count:1,pct:1}]},
+      Competent:        {n:71,rows:[{label:'Rating 5',count:36,pct:51},{label:'Rating 4',count:21,pct:30},{label:'Rating 3',count:12,pct:17},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:0,pct:0}]},
+      Efficient:        {n:71,rows:[{label:'Rating 5',count:33,pct:46},{label:'Rating 4',count:27,pct:38},{label:'Rating 3',count:10,pct:14},{label:'Rating 2',count:1,pct:1},{label:'Rating 1',count:0,pct:0}]},
+      Supportive:       {n:71,rows:[{label:'Rating 5',count:35,pct:49},{label:'Rating 4',count:28,pct:39},{label:'Rating 3',count:6,pct:8},{label:'Rating 2',count:1,pct:1},{label:'Rating 1',count:1,pct:1}]},
+      'Emotionally aware':{n:71,rows:[{label:'Rating 5',count:17,pct:24},{label:'Rating 4',count:25,pct:35},{label:'Rating 3',count:23,pct:32},{label:'Rating 2',count:4,pct:6},{label:'Rating 1',count:2,pct:3}]},
+    }
+  },
+  lt: {
+    rel:   [{label:'Extremely relevant',count:20,pct:28},{label:'Very relevant',count:9,pct:12},{label:'Somewhat relevant',count:27,pct:38},{label:'Not relevant',count:8,pct:11},{label:'Not relevant at all',count:8,pct:11}],
+    chal:  [{label:'Huge challenge',count:7,pct:10},{label:'Somewhat of a challenge',count:22,pct:31},{label:'Somewhere in the middle',count:19,pct:26},{label:'Not really much of a challenge',count:13,pct:18},{label:'Not a challenge at all',count:11,pct:15}],
+    imp:   [{label:'Huge improvement',count:34,pct:47},{label:'Somewhat of an improvement',count:17,pct:24},{label:'Somewhere in the middle',count:10,pct:14},{label:'Not really much of an improvement',count:5,pct:7},{label:'No improvement at all',count:6,pct:8}],
+    like:  [{label:'Love it',count:32,pct:44},{label:'Like it',count:30,pct:42},{label:'Neutral',count:3,pct:4},{label:"Don't really care for it",count:0,pct:0},{label:'Hate it',count:0,pct:0}],
+    help:  [{label:'Very helpful',count:33,pct:46},{label:'Somewhat helpful',count:18,pct:25},{label:'Neutral',count:11,pct:15},{label:'Not particularly helpful',count:7,pct:10},{label:'Not helpful at all',count:3,pct:4}],
+    exc:   [{label:'Very Excited',count:30,pct:42},{label:'Somewhat excited',count:27,pct:38},{label:'Neutral',count:7,pct:10},{label:'Not particularly excited',count:3,pct:4},{label:'Not excited at all',count:5,pct:7}],
+    likely:[{label:'Very likely',count:34,pct:47},{label:'Somewhat likely',count:20,pct:28},{label:'Neutral',count:8,pct:11},{label:'Somewhat unlikely',count:4,pct:6},{label:'Very unlikely',count:6,pct:8}],
+    who:   [{label:'Yes, definitely',count:27,pct:38},{label:'Pretty close',count:20,pct:28},{label:'Maybe, it depends',count:15,pct:21},{label:'I have some reservations',count:5,pct:7},{label:'No - not at all!',count:5,pct:7}],
+    agree: [
+      [{label:'Rating 5',count:24,pct:33},{label:'Rating 4',count:18,pct:25},{label:'Rating 3',count:11,pct:15},{label:'Rating 2',count:13,pct:18},{label:'Rating 1',count:6,pct:8}],
+      [{label:'Rating 5',count:19,pct:26},{label:'Rating 4',count:17,pct:24},{label:'Rating 3',count:19,pct:26},{label:'Rating 2',count:7,pct:10},{label:'Rating 1',count:10,pct:14}],
+      [{label:'Rating 5',count:11,pct:15},{label:'Rating 4',count:24,pct:33},{label:'Rating 3',count:18,pct:25},{label:'Rating 2',count:14,pct:19},{label:'Rating 1',count:5,pct:7}],
+      [{label:'Rating 5',count:37,pct:51},{label:'Rating 4',count:18,pct:25},{label:'Rating 3',count:12,pct:17},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:3,pct:4}],
+    ],
+    q12: {
+      Calm:             {n:72,rows:[{label:'Rating 5',count:39,pct:54},{label:'Rating 4',count:17,pct:24},{label:'Rating 3',count:10,pct:14},{label:'Rating 2',count:4,pct:6},{label:'Rating 1',count:2,pct:3}]},
+      Competent:        {n:72,rows:[{label:'Rating 5',count:37,pct:51},{label:'Rating 4',count:26,pct:36},{label:'Rating 3',count:3,pct:4},{label:'Rating 2',count:5,pct:7},{label:'Rating 1',count:1,pct:1}]},
+      Efficient:        {n:72,rows:[{label:'Rating 5',count:36,pct:50},{label:'Rating 4',count:19,pct:26},{label:'Rating 3',count:13,pct:18},{label:'Rating 2',count:1,pct:1},{label:'Rating 1',count:3,pct:4}]},
+      Supportive:       {n:72,rows:[{label:'Rating 5',count:52,pct:72},{label:'Rating 4',count:14,pct:19},{label:'Rating 3',count:2,pct:3},{label:'Rating 2',count:3,pct:4},{label:'Rating 1',count:1,pct:1}]},
+      'Emotionally aware':{n:72,rows:[{label:'Rating 5',count:29,pct:40},{label:'Rating 4',count:25,pct:35},{label:'Rating 3',count:14,pct:19},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:2,pct:3}]},
+    }
+  },
+  gm: {
+    rel:   [{label:'Extremely relevant',count:29,pct:38},{label:'Very relevant',count:21,pct:28},{label:'Somewhat relevant',count:19,pct:25},{label:'Not relevant',count:5,pct:7},{label:'Not relevant at all',count:2,pct:3}],
+    chal:  [{label:'Huge challenge',count:11,pct:14},{label:'Somewhat of a challenge',count:24,pct:32},{label:'Somewhere in the middle',count:20,pct:26},{label:'Not really much of a challenge',count:14,pct:18},{label:'Not a challenge at all',count:7,pct:9}],
+    imp:   [{label:'Huge improvement',count:38,pct:50},{label:'Somewhat of an improvement',count:18,pct:24},{label:'Somewhere in the middle',count:10,pct:13},{label:'Not really much of an improvement',count:7,pct:9},{label:'No improvement at all',count:3,pct:4}],
+    like:  [{label:'Love it',count:37,pct:49},{label:'Like it',count:26,pct:34},{label:'Neutral',count:9,pct:12},{label:"Don't really care for it",count:0,pct:0},{label:'Hate it',count:1,pct:1}],
+    help:  [{label:'Very helpful',count:41,pct:54},{label:'Somewhat helpful',count:20,pct:26},{label:'Neutral',count:7,pct:9},{label:'Not particularly helpful',count:6,pct:8},{label:'Not helpful at all',count:2,pct:3}],
+    exc:   [{label:'Very Excited',count:41,pct:54},{label:'Somewhat excited',count:23,pct:30},{label:'Neutral',count:5,pct:7},{label:'Not particularly excited',count:4,pct:5},{label:'Not excited at all',count:3,pct:4}],
+    likely:[{label:'Very likely',count:41,pct:54},{label:'Somewhat likely',count:22,pct:29},{label:'Neutral',count:4,pct:5},{label:'Somewhat unlikely',count:7,pct:9},{label:'Very unlikely',count:2,pct:3}],
+    who:   [{label:'Yes, definitely',count:35,pct:46},{label:'Pretty close',count:19,pct:25},{label:'Maybe, it depends',count:13,pct:17},{label:'I have some reservations',count:6,pct:8},{label:'No - not at all!',count:3,pct:4}],
+    agree: [
+      [{label:'Rating 5',count:37,pct:49},{label:'Rating 4',count:19,pct:25},{label:'Rating 3',count:8,pct:11},{label:'Rating 2',count:9,pct:12},{label:'Rating 1',count:3,pct:4}],
+      [{label:'Rating 5',count:30,pct:39},{label:'Rating 4',count:26,pct:34},{label:'Rating 3',count:11,pct:14},{label:'Rating 2',count:6,pct:8},{label:'Rating 1',count:3,pct:4}],
+      [{label:'Rating 5',count:20,pct:26},{label:'Rating 4',count:18,pct:24},{label:'Rating 3',count:27,pct:36},{label:'Rating 2',count:10,pct:13},{label:'Rating 1',count:1,pct:1}],
+      [{label:'Rating 5',count:46,pct:61},{label:'Rating 4',count:16,pct:21},{label:'Rating 3',count:9,pct:12},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:3,pct:4}],
+    ],
+    q12: {
+      Calm:             {n:76,rows:[{label:'Rating 5',count:38,pct:50},{label:'Rating 4',count:28,pct:37},{label:'Rating 3',count:2,pct:3},{label:'Rating 2',count:6,pct:8},{label:'Rating 1',count:2,pct:3}]},
+      Competent:        {n:76,rows:[{label:'Rating 5',count:46,pct:61},{label:'Rating 4',count:18,pct:24},{label:'Rating 3',count:10,pct:13},{label:'Rating 2',count:1,pct:1},{label:'Rating 1',count:1,pct:1}]},
+      Efficient:        {n:76,rows:[{label:'Rating 5',count:50,pct:66},{label:'Rating 4',count:18,pct:24},{label:'Rating 3',count:6,pct:8},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:0,pct:0}]},
+      Supportive:       {n:76,rows:[{label:'Rating 5',count:45,pct:59},{label:'Rating 4',count:21,pct:28},{label:'Rating 3',count:8,pct:11},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:0,pct:0}]},
+      'Emotionally aware':{n:76,rows:[{label:'Rating 5',count:22,pct:29},{label:'Rating 4',count:25,pct:33},{label:'Rating 3',count:25,pct:33},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:2,pct:3}]},
+    }
+  },
+  ws: {
+    rel:   [{label:'Extremely relevant',count:15,pct:19},{label:'Very relevant',count:15,pct:19},{label:'Somewhat relevant',count:32,pct:40},{label:'Not relevant',count:11,pct:14},{label:'Not relevant at all',count:7,pct:9}],
+    chal:  [{label:'Huge challenge',count:13,pct:16},{label:'Somewhat of a challenge',count:19,pct:24},{label:'Somewhere in the middle',count:18,pct:22},{label:'Not really much of a challenge',count:14,pct:18},{label:'Not a challenge at all',count:16,pct:20}],
+    imp:   [{label:'Huge improvement',count:27,pct:34},{label:'Somewhat of an improvement',count:22,pct:28},{label:'Somewhere in the middle',count:16,pct:20},{label:'Not really much of an improvement',count:6,pct:8},{label:'No improvement at all',count:9,pct:11}],
+    like:  [{label:'Love it',count:29,pct:36},{label:'Like it',count:25,pct:31},{label:'Neutral',count:18,pct:22},{label:"Don't really care for it",count:0,pct:0},{label:'Hate it',count:1,pct:1}],
+    help:  [{label:'Very helpful',count:28,pct:35},{label:'Somewhat helpful',count:23,pct:29},{label:'Neutral',count:12,pct:15},{label:'Not particularly helpful',count:10,pct:12},{label:'Not helpful at all',count:7,pct:9}],
+    exc:   [{label:'Very Excited',count:29,pct:36},{label:'Somewhat excited',count:23,pct:29},{label:'Neutral',count:13,pct:16},{label:'Not particularly excited',count:12,pct:15},{label:'Not excited at all',count:3,pct:4}],
+    likely:[{label:'Very likely',count:32,pct:40},{label:'Somewhat likely',count:17,pct:21},{label:'Neutral',count:11,pct:14},{label:'Somewhat unlikely',count:9,pct:11},{label:'Very unlikely',count:11,pct:14}],
+    who:   [{label:'Yes, definitely',count:28,pct:35},{label:'Pretty close',count:18,pct:22},{label:'Maybe, it depends',count:18,pct:22},{label:'I have some reservations',count:13,pct:16},{label:'No - not at all!',count:3,pct:4}],
+    agree: [
+      [{label:'Rating 5',count:29,pct:36},{label:'Rating 4',count:19,pct:24},{label:'Rating 3',count:16,pct:20},{label:'Rating 2',count:9,pct:11},{label:'Rating 1',count:7,pct:9}],
+      [{label:'Rating 5',count:29,pct:36},{label:'Rating 4',count:16,pct:20},{label:'Rating 3',count:17,pct:21},{label:'Rating 2',count:11,pct:14},{label:'Rating 1',count:7,pct:9}],
+      [{label:'Rating 5',count:21,pct:26},{label:'Rating 4',count:25,pct:31},{label:'Rating 3',count:24,pct:30},{label:'Rating 2',count:6,pct:8},{label:'Rating 1',count:4,pct:5}],
+      [{label:'Rating 5',count:34,pct:42},{label:'Rating 4',count:24,pct:30},{label:'Rating 3',count:8,pct:10},{label:'Rating 2',count:10,pct:12},{label:'Rating 1',count:4,pct:5}],
+    ],
+    q12: {
+      Calm:             {n:80,rows:[{label:'Rating 5',count:38,pct:48},{label:'Rating 4',count:27,pct:34},{label:'Rating 3',count:13,pct:16},{label:'Rating 2',count:2,pct:2},{label:'Rating 1',count:0,pct:0}]},
+      Competent:        {n:80,rows:[{label:'Rating 5',count:42,pct:52},{label:'Rating 4',count:28,pct:35},{label:'Rating 3',count:5,pct:6},{label:'Rating 2',count:4,pct:5},{label:'Rating 1',count:1,pct:1}]},
+      Efficient:        {n:80,rows:[{label:'Rating 5',count:46,pct:57},{label:'Rating 4',count:26,pct:32},{label:'Rating 3',count:3,pct:4},{label:'Rating 2',count:4,pct:5},{label:'Rating 1',count:1,pct:1}]},
+      Supportive:       {n:80,rows:[{label:'Rating 5',count:40,pct:50},{label:'Rating 4',count:21,pct:26},{label:'Rating 3',count:9,pct:11},{label:'Rating 2',count:10,pct:12},{label:'Rating 1',count:0,pct:0}]},
+      'Emotionally aware':{n:80,rows:[{label:'Rating 5',count:22,pct:28},{label:'Rating 4',count:20,pct:25},{label:'Rating 3',count:27,pct:34},{label:'Rating 2',count:9,pct:11},{label:'Rating 1',count:2,pct:2}]},
+    }
+  }
 };
 
-function pctColor(val) {
-  if(val === null) return null;
-  const ratio = Math.min(Math.max((val - 10) / 70, 0), 1);
-  const r = Math.round(255 - ratio * (255 - 74));
-  const g = Math.round(255 - ratio * (255 - 222));
-  const b = Math.round(255 - ratio * (255 - 128));
+const ovRows = [{label:'Differently for different scenarios',count:66,pct:53},{label:'Same across tasks',count:58,pct:47}];
+
+// ── RENDER CONCEPT SECTIONS ───────────────────────────────────────────────
+const maps = {mr:D.mr, dd:D.dd, lt:D.lt, gm:D.gm, ws:D.ws};
+for (const [p, d] of Object.entries(maps)) {
+  bars(`${p}_rel`,   d.rel,   relC);
+  bars(`${p}_chal`,  d.chal,  chalC);
+  bars(`${p}_imp`,   d.imp,   impC);
+  bars(`${p}_like`,  d.like,  likeC);
+  bars(`${p}_help`,  d.help,  helpC);
+  bars(`${p}_exc`,   d.exc,   excC);
+  bars(`${p}_likely`,d.likely,likelyC);
+  bars(`${p}_who`,   d.who,   whoC);
+  agree(`${p}_agree`, d.agree);
+  traits(`${p}_traits`, d.q12);
+}
+bars('ov_pref', ovRows, ovC);
+
+// ── COMPARISON DATA ───────────────────────────────────────────────────────
+const CONCEPTS = ['Morning Routine','Document Digitizer','Language Tutor','Grocery & Meal Prep','Work / School'];
+const cmpSections = [
+  { title:'Perception & Relevance', rows:[
+    {q:'Relevance',          t1l:'Extremely relevant',       t2l:'Extremely + Very relevant',
+     top1:[30,17,28,38,19], top2:[55,54,40,66,38]},
+    {q:'Challenge level',    t1l:'Huge challenge',           t2l:'Huge + Somewhat of a challenge',
+     top1:[14,8,10,14,16],  top2:[44,32,41,46,40]},
+    {q:'Improvement vs. today',t1l:'Huge improvement',      t2l:'Huge + Somewhat of an improvement',
+     top1:[41,44,47,50,34], top2:[66,69,71,74,62]},
+  ]},
+  { title:'Video Reaction', rows:[
+    {q:'Like the video',     t1l:'Love it',                  t2l:'Love it + Like it',
+     top1:[41,32,44,49,36], top2:[78,77,86,83,67]},
+    {q:'Helpfulness day-to-day',t1l:'Very helpful',          t2l:'Very + Somewhat helpful',
+     top1:[41,44,46,54,35], top2:[80,71,71,80,64]},
+    {q:'Excitement about Floyd',t1l:'Very Excited',          t2l:'Very Excited + Somewhat excited',
+     top1:[42,39,42,54,36], top2:[79,69,80,84,65]},
+    {q:'Likelihood to use',  t1l:'Very likely',              t2l:'Very + Somewhat likely',
+     top1:[46,45,47,54,40], top2:[73,69,75,83,61]},
+    {q:'Want Floyd in home', t1l:'Yes, definitely',          t2l:'Yes, definitely + Pretty close',
+     top1:[39,41,38,46,35], top2:[70,66,66,71,57]},
+  ]},
+  { title:'Agreement Statements (1–5 scale)', rows:[
+    {q:'Saves me a lot of time',      t1l:'Rating 5',        t2l:'Rating 4 + 5',
+     top1:[39,44,33,49,36], top2:[64,65,58,74,60]},
+    {q:'Home would run more smoothly',t1l:'Rating 5',        t2l:'Rating 4 + 5',
+     top1:[38,31,26,39,36], top2:[69,55,50,73,56]},
+    {q:'Trust data used responsibly', t1l:'Rating 5',        t2l:'Rating 4 + 5',
+     top1:[27,24,15,26,26], top2:[61,52,48,50,57]},
+    {q:'Improvement over existing tech',t1l:'Rating 5',      t2l:'Rating 4 + 5',
+     top1:[44,35,51,61,42], top2:[76,74,76,82,72]},
+  ]},
+];
+
+function pctBg(v) {
+  const ratio = Math.min(Math.max((v-10)/70,0),1);
+  const r = Math.round(255-ratio*(255-74));
+  const g = Math.round(255-ratio*(255-222));
+  const b = Math.round(255-ratio*(255-128));
   return `rgb(${r},${g},${b})`;
 }
 
-function buildCompTable(viewKey) {
-  const containerId = viewKey === 'top1' ? 'comp1_content' : 'comp2_content';
-  const el = document.getElementById(containerId);
-  if(!el) return;
-
+function buildCmp(viewKey) {
+  const id = viewKey==='top1' ? 'cmp_top1' : 'cmp_top2';
+  const el = document.getElementById(id);
   let html = '';
-  for(const sec of compData.sections) {
-    html += `<div class="comp-section">
-      <div class="comp-section-title">${sec.title}</div>
-      <div style="overflow-x:auto;">
-      <table class="comp-table">
-        <thead><tr>
-          <th class="q-col">Question</th>
-          ${CONCEPTS.map(c => `<th>${c}</th>`).join('')}
-        </tr></thead>
-        <tbody>`;
-
-    for(const row of sec.questions) {
+  for (const sec of cmpSections) {
+    html += `<div class="comp-sec"><div class="comp-sec-title">${sec.title}</div><div style="overflow-x:auto"><table class="ctable"><thead><tr><th class="qcol">Question</th>${CONCEPTS.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>`;
+    for (const row of sec.rows) {
       const vals = row[viewKey];
-      const label = row[viewKey + '_label'];
-      const maxVal = Math.max(...vals.filter(v => v !== null));
-
-      html += `<tr>
-        <td class="q-cell">${row.q}<br><span style="font-size:9px;color:var(--muted)">${label}</span></td>`;
-
-      for(let i = 0; i < 5; i++) {
-        const v = vals[i];
-        if(v === null) {
-          html += `<td><span class="pct-na">N/A</span></td>`;
-        } else {
-          const bg = pctColor(v);
-          const isWinner = v === maxVal;
-          html += `<td>
-            <div class="pct-cell" style="background:${bg};padding:5px 8px;border-radius:5px;display:inline-block;min-width:52px;">
-              ${Math.round(v)}%${isWinner ? '<span class="winner-badge">TOP</span>' : ''}
-            </div>
-          </td>`;
-        }
-      }
-      html += '</tr>';
+      const lbl  = viewKey==='top1' ? row.t1l : row.t2l;
+      const mx   = Math.max(...vals);
+      html += `<tr><td class="qcell">${row.q}<br><span style="font-size:9px;color:var(--muted)">${lbl}</span></td>`;
+      vals.forEach(v => {
+        const top = v===mx;
+        html += `<td><div class="pcell" style="background:${pctBg(v)}">${v}%${top?'<span class="top-badge">TOP</span>':''}</div></td>`;
+      });
+      html += `</tr>`;
     }
-    html += '</tbody></table></div></div>';
+    html += `</tbody></table></div></div>`;
   }
   el.innerHTML = html;
 }
 
+buildCmp('top1');
+buildCmp('top2');
+
 function switchView(v) {
-  document.getElementById('comp-top1').style.display = v === 'top1' ? 'block' : 'none';
-  document.getElementById('comp-top2').style.display = v === 'top2' ? 'block' : 'none';
-  document.getElementById('btn-top1').classList.toggle('active', v === 'top1');
-  document.getElementById('btn-top2').classList.toggle('active', v === 'top2');
+  document.getElementById('cmp_top1').style.display = v==='top1'?'block':'none';
+  document.getElementById('cmp_top2').style.display = v==='top2'?'block':'none';
+  document.getElementById('btn1').classList.toggle('active',v==='top1');
+  document.getElementById('btn2').classList.toggle('active',v==='top2');
 }
 
-buildCompTable('top1');
-buildCompTable('top2');
-
-
-// ---- Q12 TRAIT DATA ----
-const traitData = {
-  'Morning Routine': {
-    Calm:              {1:1.4, 2:5.6,  3:7.0,  4:36.6, 5:49.3},
-    Competent:         {1:0,   2:1.4,  3:9.9,  4:36.6, 5:52.1},
-    Efficient:         {1:0,   2:4.2,  3:9.9,  4:35.2, 5:50.7},
-    Supportive:        {1:1.4, 2:4.2,  3:8.5,  4:32.4, 5:53.5},
-    'Emotionally aware':{1:0,  2:11.3, 3:22.5, 4:36.6, 5:29.6},
-  },
-  'Document Digitizer': {
-    Calm:              {1:1.4, 2:5.6,  3:2.8,  4:38.0, 5:52.1},
-    Competent:         {1:0,   2:2.8,  3:16.9, 4:29.6, 5:50.7},
-    Efficient:         {1:0,   2:1.4,  3:14.1, 4:38.0, 5:46.5},
-    Supportive:        {1:1.4, 2:1.4,  3:8.5,  4:39.4, 5:49.3},
-    'Emotionally aware':{1:2.8, 2:5.6, 3:32.4, 4:35.2, 5:23.9},
-  },
-  'Language Tutor': {
-    Calm:              {1:2.8, 2:5.6,  3:13.9, 4:23.6, 5:54.2},
-    Competent:         {1:1.4, 2:6.9,  3:4.2,  4:36.1, 5:51.4},
-    Efficient:         {1:4.2, 2:1.4,  3:18.1, 4:26.4, 5:50.0},
-    Supportive:        {1:1.4, 2:4.2,  3:2.8,  4:19.4, 5:72.2},
-    'Emotionally aware':{1:2.8, 2:2.8, 3:19.4, 4:34.7, 5:40.3},
-  },
-  'Grocery & Meal Prep': {
-    Calm:              {1:2.6, 2:7.9,  3:2.6,  4:36.8, 5:50.0},
-    Competent:         {1:1.3, 2:1.3,  3:13.2, 4:23.7, 5:60.5},
-    Efficient:         {1:0,   2:2.6,  3:7.9,  4:23.7, 5:65.8},
-    Supportive:        {1:0,   2:2.6,  3:10.5, 4:27.6, 5:59.2},
-    'Emotionally aware':{1:2.6, 2:2.6, 3:32.9, 4:32.9, 5:28.9},
-  },
-  'Work / School': {
-    Calm:              {1:0,   2:2.5,  3:16.2, 4:33.8, 5:47.5},
-    Competent:         {1:1.2, 2:5.0,  3:6.2,  4:35.0, 5:52.5},
-    Efficient:         {1:1.2, 2:5.0,  3:3.8,  4:32.5, 5:57.5},
-    Supportive:        {1:0,   2:12.5, 3:11.2, 4:26.2, 5:50.0},
-    'Emotionally aware':{1:2.5, 2:11.2, 3:33.8, 4:25.0, 5:27.5},
-  },
-};
-
-const traitColors = ['#f87171','#fca5a5','#6b7280','#93c5fd','#60a5fa'];
-const traitDots = ['#c8f060','#60c8f0','#f060c8','#fbbf24','#a78bfa'];
-
-const prefixToName = {
-  mr: 'Morning Routine', dd: 'Document Digitizer', lt: 'Language Tutor',
-  gm: 'Grocery & Meal Prep', ws: 'Work / School'
-};
-
-function buildTraits(prefix) {
-  const concept = prefixToName[prefix];
-  const data = traitData[concept];
-  if(!data) return;
-  const el = document.getElementById(prefix + '_traits');
-  if(!el) return;
-
-  const traits = ['Calm','Competent','Efficient','Supportive','Emotionally aware'];
-  el.innerHTML = traits.map((trait, ti) => {
-    const d = data[trait];
-    const segs = [1,2,3,4,5].map(rating => {
-      const pct = d[rating] || 0;
-      const show = pct >= 10;
-      return `<div class="trait-seg" style="flex:${Math.max(pct,0.5)};background:${traitColors[rating-1]}">${show ? Math.round(pct)+'%' : ''}</div>`;
-    }).join('');
-    const top2 = Math.round((d[4]||0) + (d[5]||0));
-    const avg = ((1*(d[1]||0)+2*(d[2]||0)+3*(d[3]||0)+4*(d[4]||0)+5*(d[5]||0))/100).toFixed(1);
-    return `<div class="trait-card">
-      <div class="trait-name"><span class="trait-dot" style="background:${traitDots[ti]}"></span>${trait}</div>
-      <div class="trait-stacked">${segs}</div>
-      <div class="trait-summary">
-        <span>4+5 (agree): <strong>${top2}%</strong></span>
-        <span>Avg: <strong>${avg}</strong></span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-['mr','dd','lt','gm','ws'].forEach(buildTraits);
-
-// Update comparison data with dd_chal
-compData.sections[0].questions[1].top1[1] = 8.5;
-compData.sections[0].questions[1].top2[1] = 8.5 + 23.9;
-buildCompTable('top1');
-buildCompTable('top2');
-
-// ---- EXPORT TO CSV ----
-function exportToCSV() {
-  const currentView = document.getElementById('comp-top1').style.display !== 'none' ? 'top1' : 'top2';
-  const viewLabel = currentView === 'top1' ? 'Top Response' : 'Top 2 Responses Combined';
-  
-  let rows = [['Floyd Concept Testing — Cross-Concept Comparison']];
-  rows.push([viewLabel]);
-  rows.push([]);
-  rows.push(['Section','Question','Response Counted',...CONCEPTS]);
-
-  for(const sec of compData.sections) {
-    for(const row of sec.questions) {
-      const label = row[currentView + '_label'];
-      const vals = row[currentView].map(v => v === null ? 'N/A' : Math.round(v) + '%');
-      rows.push([sec.title, row.q, label, ...vals]);
-    }
-  }
-
-  const csv = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], {type:'text/csv'});
-  const url = URL.createObjectURL(blob);
+function exportCSV() {
+  const v = document.getElementById('cmp_top1').style.display!=='none' ? 'top1' : 'top2';
+  const lbl = v==='top1' ? 'Top Box' : 'Top 2 Box';
+  let rows = [[`Floyd Concept Testing — ${lbl} Comparison`],['Section','Question','Response counted',...CONCEPTS],[]];
+  for (const sec of cmpSections)
+    for (const row of sec.rows)
+      rows.push([sec.title, row.q, v==='top1'?row.t1l:row.t2l, ...row[v].map(x=>x+'%')]);
+  const csv = rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a = document.createElement('a');
-  a.href = url;
-  a.download = `Floyd_Comparison_${currentView === 'top1' ? 'TopBox' : 'Top2Box'}.csv`;
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = `Floyd_${v==='top1'?'TopBox':'Top2Box'}.csv`;
   a.click();
-  URL.revokeObjectURL(url);
 }
-
 </script>
 </body>
 </html>
