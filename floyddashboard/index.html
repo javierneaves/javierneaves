@@ -130,7 +130,7 @@ main{padding:2rem;max-width:1400px;margin:0 auto}
     <div class="ctitle">Agreement statements (1 = strongly disagree → 5 = strongly agree)</div>
     <div id="mr_agree"></div>
   </div>
-  <div class="sub-hdr">Q12 — Floyd personality / style rating (1 = not at all → 5 = extremely)</div>
+  <div class="sub-hdr">Q12 — Floyd personality / style (5 = Describes perfectly → 1 = Doesn't describe at all)</div>
   <div class="traits-grid" id="mr_traits"></div>
 </div>
 
@@ -151,7 +151,7 @@ main{padding:2rem;max-width:1400px;margin:0 auto}
     <div class="ctitle">Agreement statements (1 = strongly disagree → 5 = strongly agree)</div>
     <div id="dd_agree"></div>
   </div>
-  <div class="sub-hdr">Q12 — Floyd personality / style rating (1 = not at all → 5 = extremely)</div>
+  <div class="sub-hdr">Q12 — Floyd personality / style (5 = Describes perfectly → 1 = Doesn't describe at all)</div>
   <div class="traits-grid" id="dd_traits"></div>
 </div>
 
@@ -172,7 +172,7 @@ main{padding:2rem;max-width:1400px;margin:0 auto}
     <div class="ctitle">Agreement statements (1 = strongly disagree → 5 = strongly agree)</div>
     <div id="lt_agree"></div>
   </div>
-  <div class="sub-hdr">Q12 — Floyd personality / style rating (1 = not at all → 5 = extremely)</div>
+  <div class="sub-hdr">Q12 — Floyd personality / style (5 = Describes perfectly → 1 = Doesn't describe at all)</div>
   <div class="traits-grid" id="lt_traits"></div>
 </div>
 
@@ -193,7 +193,7 @@ main{padding:2rem;max-width:1400px;margin:0 auto}
     <div class="ctitle">Agreement statements (1 = strongly disagree → 5 = strongly agree)</div>
     <div id="gm_agree"></div>
   </div>
-  <div class="sub-hdr">Q12 — Floyd personality / style rating (1 = not at all → 5 = extremely)</div>
+  <div class="sub-hdr">Q12 — Floyd personality / style (5 = Describes perfectly → 1 = Doesn't describe at all)</div>
   <div class="traits-grid" id="gm_traits"></div>
 </div>
 
@@ -214,7 +214,7 @@ main{padding:2rem;max-width:1400px;margin:0 auto}
     <div class="ctitle">Agreement statements (1 = strongly disagree → 5 = strongly agree)</div>
     <div id="ws_agree"></div>
   </div>
-  <div class="sub-hdr">Q12 — Floyd personality / style rating (1 = not at all → 5 = extremely)</div>
+  <div class="sub-hdr">Q12 — Floyd personality / style (5 = Describes perfectly → 1 = Doesn't describe at all)</div>
   <div class="traits-grid" id="ws_traits"></div>
 </div>
 
@@ -262,7 +262,7 @@ const C = {
   acc:'#c8f060',
 };
 const agreeC = ['#f87171','#fca5a5','#6b7280','#93c5fd','#60a5fa'];
-const traitC  = ['#f87171','#fca5a5','#6b7280','#93c5fd','#60a5fa'];
+const traitC  = ['#60a5fa','#93c5fd','#6b7280','#fca5a5','#f87171']; // 5=blue(best) → 1=red(worst)
 const traitDots = ['#c8f060','#60c8f0','#f060c8','#fbbf24','#a78bfa'];
 
 function relC(l){
@@ -380,6 +380,9 @@ function agree(id, rows4) {
 }
 
 // ── TRAITS ───────────────────────────────────────────────────────────────
+// Scale: 5=Describes perfectly, 4=Describes somewhat, 3=Neutral, 2=Doesn't really describe, 1=Doesn't describe at all
+const traitLabels = ['Describes perfectly','Describes somewhat','Neutral',"Doesn't really describe","Doesn't describe at all"];
+
 function traits(id, traitMap) {
   const el = document.getElementById(id);
   if (!el) return;
@@ -389,14 +392,20 @@ function traits(id, traitMap) {
     const segs = d.rows.map((r,i)=>{
       const flex = Math.max(r.pct,.3);
       const show = r.pct >= 10;
-      return `<div class="ss" style="flex:${flex};background:${traitC[i]}">${show ? r.pct+'%' : ''}</div>`;
+      return `<div class="ss" style="flex:${flex};background:${traitC[i]}" title="${traitLabels[i]}: ${r.pct}%">${show ? r.pct+'%' : ''}</div>`;
     }).join('');
+    const top1 = d.rows[0].pct;
     const top2 = d.rows[0].pct + d.rows[1].pct;
-    const avg = ((d.rows[0].count*5+d.rows[1].count*4+d.rows[2].count*3+d.rows[3].count*2+d.rows[4].count*1)/d.n).toFixed(1);
     return `<div class="tcrd">
       <div class="tname"><span class="tdot" style="background:${traitDots[ti]}"></span>${name}</div>
       <div class="tstk">${segs}</div>
-      <div class="tsum"><span>Top 2 box: <strong>${top2}%</strong></span><span>Avg: <strong>${avg}</strong></span></div>
+      <div style="font-size:9px;color:var(--muted);margin-bottom:5px;display:flex;gap:12px">
+        ${traitLabels.map((l,i)=>`<span style="display:flex;align-items:center;gap:3px"><span style="width:7px;height:7px;border-radius:1px;background:${traitC[i]};display:inline-block;flex-shrink:0"></span>${l}</span>`).join('')}
+      </div>
+      <div class="tsum">
+        <span>Top box (Describes perfectly): <strong>${top1}%</strong></span>
+        <span>Top 2 box: <strong>${top2}%</strong></span>
+      </div>
     </div>`;
   }).join('');
 }
@@ -419,11 +428,11 @@ const D = {
       [{label:'Rating 5',count:31,pct:44},{label:'Rating 4',count:23,pct:32},{label:'Rating 3',count:7,pct:10},{label:'Rating 2',count:8,pct:11},{label:'Rating 1',count:2,pct:3}],
     ],
     q12: {
-      Calm:             {n:71,rows:[{label:'Rating 5',count:35,pct:49},{label:'Rating 4',count:26,pct:37},{label:'Rating 3',count:5,pct:7},{label:'Rating 2',count:4,pct:6},{label:'Rating 1',count:1,pct:1}]},
-      Competent:        {n:71,rows:[{label:'Rating 5',count:37,pct:52},{label:'Rating 4',count:26,pct:37},{label:'Rating 3',count:7,pct:10},{label:'Rating 2',count:1,pct:1},{label:'Rating 1',count:0,pct:0}]},
-      Efficient:        {n:71,rows:[{label:'Rating 5',count:36,pct:51},{label:'Rating 4',count:25,pct:35},{label:'Rating 3',count:7,pct:10},{label:'Rating 2',count:3,pct:4},{label:'Rating 1',count:0,pct:0}]},
-      Supportive:       {n:71,rows:[{label:'Rating 5',count:38,pct:54},{label:'Rating 4',count:23,pct:32},{label:'Rating 3',count:6,pct:8},{label:'Rating 2',count:3,pct:4},{label:'Rating 1',count:1,pct:1}]},
-      'Emotionally aware':{n:71,rows:[{label:'Rating 5',count:21,pct:30},{label:'Rating 4',count:26,pct:37},{label:'Rating 3',count:16,pct:23},{label:'Rating 2',count:8,pct:11},{label:'Rating 1',count:0,pct:0}]},
+      Calm:             {n:71,rows:[{label:'Describes perfectly',count:35,pct:49},{label:'Describes somewhat',count:26,pct:37},{label:'Neutral',count:5,pct:7},{label:"Doesn't really describe",count:4,pct:6},{label:"Doesn't describe at all",count:1,pct:1}]},
+      Competent:        {n:71,rows:[{label:'Describes perfectly',count:37,pct:52},{label:'Describes somewhat',count:26,pct:37},{label:'Neutral',count:7,pct:10},{label:"Doesn't really describe",count:1,pct:1},{label:"Doesn't describe at all",count:0,pct:0}]},
+      Efficient:        {n:71,rows:[{label:'Describes perfectly',count:36,pct:51},{label:'Describes somewhat',count:25,pct:35},{label:'Neutral',count:7,pct:10},{label:"Doesn't really describe",count:3,pct:4},{label:"Doesn't describe at all",count:0,pct:0}]},
+      Supportive:       {n:71,rows:[{label:'Describes perfectly',count:38,pct:54},{label:'Describes somewhat',count:23,pct:32},{label:'Neutral',count:6,pct:8},{label:"Doesn't really describe",count:3,pct:4},{label:"Doesn't describe at all",count:1,pct:1}]},
+      'Emotionally aware':{n:71,rows:[{label:'Describes perfectly',count:21,pct:30},{label:'Describes somewhat',count:26,pct:37},{label:'Neutral',count:16,pct:23},{label:"Doesn't really describe",count:8,pct:11},{label:"Doesn't describe at all",count:0,pct:0}]},
     }
   },
   dd: {
@@ -442,11 +451,11 @@ const D = {
       [{label:'Rating 5',count:25,pct:35},{label:'Rating 4',count:28,pct:39},{label:'Rating 3',count:11,pct:15},{label:'Rating 2',count:7,pct:10},{label:'Rating 1',count:0,pct:0}],
     ],
     q12: {
-      Calm:             {n:71,rows:[{label:'Rating 5',count:37,pct:52},{label:'Rating 4',count:27,pct:38},{label:'Rating 3',count:2,pct:3},{label:'Rating 2',count:4,pct:6},{label:'Rating 1',count:1,pct:1}]},
-      Competent:        {n:71,rows:[{label:'Rating 5',count:36,pct:51},{label:'Rating 4',count:21,pct:30},{label:'Rating 3',count:12,pct:17},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:0,pct:0}]},
-      Efficient:        {n:71,rows:[{label:'Rating 5',count:33,pct:46},{label:'Rating 4',count:27,pct:38},{label:'Rating 3',count:10,pct:14},{label:'Rating 2',count:1,pct:1},{label:'Rating 1',count:0,pct:0}]},
-      Supportive:       {n:71,rows:[{label:'Rating 5',count:35,pct:49},{label:'Rating 4',count:28,pct:39},{label:'Rating 3',count:6,pct:8},{label:'Rating 2',count:1,pct:1},{label:'Rating 1',count:1,pct:1}]},
-      'Emotionally aware':{n:71,rows:[{label:'Rating 5',count:17,pct:24},{label:'Rating 4',count:25,pct:35},{label:'Rating 3',count:23,pct:32},{label:'Rating 2',count:4,pct:6},{label:'Rating 1',count:2,pct:3}]},
+      Calm:             {n:71,rows:[{label:'Describes perfectly',count:37,pct:52},{label:'Describes somewhat',count:27,pct:38},{label:'Neutral',count:2,pct:3},{label:"Doesn't really describe",count:4,pct:6},{label:"Doesn't describe at all",count:1,pct:1}]},
+      Competent:        {n:71,rows:[{label:'Describes perfectly',count:36,pct:51},{label:'Describes somewhat',count:21,pct:30},{label:'Neutral',count:12,pct:17},{label:"Doesn't really describe",count:2,pct:3},{label:"Doesn't describe at all",count:0,pct:0}]},
+      Efficient:        {n:71,rows:[{label:'Describes perfectly',count:33,pct:46},{label:'Describes somewhat',count:27,pct:38},{label:'Neutral',count:10,pct:14},{label:"Doesn't really describe",count:1,pct:1},{label:"Doesn't describe at all",count:0,pct:0}]},
+      Supportive:       {n:71,rows:[{label:'Describes perfectly',count:35,pct:49},{label:'Describes somewhat',count:28,pct:39},{label:'Neutral',count:6,pct:8},{label:"Doesn't really describe",count:1,pct:1},{label:"Doesn't describe at all",count:1,pct:1}]},
+      'Emotionally aware':{n:71,rows:[{label:'Describes perfectly',count:17,pct:24},{label:'Describes somewhat',count:25,pct:35},{label:'Neutral',count:23,pct:32},{label:"Doesn't really describe",count:4,pct:6},{label:"Doesn't describe at all",count:2,pct:3}]},
     }
   },
   lt: {
@@ -465,11 +474,11 @@ const D = {
       [{label:'Rating 5',count:37,pct:51},{label:'Rating 4',count:18,pct:25},{label:'Rating 3',count:12,pct:17},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:3,pct:4}],
     ],
     q12: {
-      Calm:             {n:72,rows:[{label:'Rating 5',count:39,pct:54},{label:'Rating 4',count:17,pct:24},{label:'Rating 3',count:10,pct:14},{label:'Rating 2',count:4,pct:6},{label:'Rating 1',count:2,pct:3}]},
-      Competent:        {n:72,rows:[{label:'Rating 5',count:37,pct:51},{label:'Rating 4',count:26,pct:36},{label:'Rating 3',count:3,pct:4},{label:'Rating 2',count:5,pct:7},{label:'Rating 1',count:1,pct:1}]},
-      Efficient:        {n:72,rows:[{label:'Rating 5',count:36,pct:50},{label:'Rating 4',count:19,pct:26},{label:'Rating 3',count:13,pct:18},{label:'Rating 2',count:1,pct:1},{label:'Rating 1',count:3,pct:4}]},
-      Supportive:       {n:72,rows:[{label:'Rating 5',count:52,pct:72},{label:'Rating 4',count:14,pct:19},{label:'Rating 3',count:2,pct:3},{label:'Rating 2',count:3,pct:4},{label:'Rating 1',count:1,pct:1}]},
-      'Emotionally aware':{n:72,rows:[{label:'Rating 5',count:29,pct:40},{label:'Rating 4',count:25,pct:35},{label:'Rating 3',count:14,pct:19},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:2,pct:3}]},
+      Calm:             {n:72,rows:[{label:'Describes perfectly',count:39,pct:54},{label:'Describes somewhat',count:17,pct:24},{label:'Neutral',count:10,pct:14},{label:"Doesn't really describe",count:4,pct:6},{label:"Doesn't describe at all",count:2,pct:3}]},
+      Competent:        {n:72,rows:[{label:'Describes perfectly',count:37,pct:51},{label:'Describes somewhat',count:26,pct:36},{label:'Neutral',count:3,pct:4},{label:"Doesn't really describe",count:5,pct:7},{label:"Doesn't describe at all",count:1,pct:1}]},
+      Efficient:        {n:72,rows:[{label:'Describes perfectly',count:36,pct:50},{label:'Describes somewhat',count:19,pct:26},{label:'Neutral',count:13,pct:18},{label:"Doesn't really describe",count:1,pct:1},{label:"Doesn't describe at all",count:3,pct:4}]},
+      Supportive:       {n:72,rows:[{label:'Describes perfectly',count:52,pct:72},{label:'Describes somewhat',count:14,pct:19},{label:'Neutral',count:2,pct:3},{label:"Doesn't really describe",count:3,pct:4},{label:"Doesn't describe at all",count:1,pct:1}]},
+      'Emotionally aware':{n:72,rows:[{label:'Describes perfectly',count:29,pct:40},{label:'Describes somewhat',count:25,pct:35},{label:'Neutral',count:14,pct:19},{label:"Doesn't really describe",count:2,pct:3},{label:"Doesn't describe at all",count:2,pct:3}]},
     }
   },
   gm: {
@@ -488,11 +497,11 @@ const D = {
       [{label:'Rating 5',count:46,pct:61},{label:'Rating 4',count:16,pct:21},{label:'Rating 3',count:9,pct:12},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:3,pct:4}],
     ],
     q12: {
-      Calm:             {n:76,rows:[{label:'Rating 5',count:38,pct:50},{label:'Rating 4',count:28,pct:37},{label:'Rating 3',count:2,pct:3},{label:'Rating 2',count:6,pct:8},{label:'Rating 1',count:2,pct:3}]},
-      Competent:        {n:76,rows:[{label:'Rating 5',count:46,pct:61},{label:'Rating 4',count:18,pct:24},{label:'Rating 3',count:10,pct:13},{label:'Rating 2',count:1,pct:1},{label:'Rating 1',count:1,pct:1}]},
-      Efficient:        {n:76,rows:[{label:'Rating 5',count:50,pct:66},{label:'Rating 4',count:18,pct:24},{label:'Rating 3',count:6,pct:8},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:0,pct:0}]},
-      Supportive:       {n:76,rows:[{label:'Rating 5',count:45,pct:59},{label:'Rating 4',count:21,pct:28},{label:'Rating 3',count:8,pct:11},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:0,pct:0}]},
-      'Emotionally aware':{n:76,rows:[{label:'Rating 5',count:22,pct:29},{label:'Rating 4',count:25,pct:33},{label:'Rating 3',count:25,pct:33},{label:'Rating 2',count:2,pct:3},{label:'Rating 1',count:2,pct:3}]},
+      Calm:             {n:76,rows:[{label:'Describes perfectly',count:38,pct:50},{label:'Describes somewhat',count:28,pct:37},{label:'Neutral',count:2,pct:3},{label:"Doesn't really describe",count:6,pct:8},{label:"Doesn't describe at all",count:2,pct:3}]},
+      Competent:        {n:76,rows:[{label:'Describes perfectly',count:46,pct:61},{label:'Describes somewhat',count:18,pct:24},{label:'Neutral',count:10,pct:13},{label:"Doesn't really describe",count:1,pct:1},{label:"Doesn't describe at all",count:1,pct:1}]},
+      Efficient:        {n:76,rows:[{label:'Describes perfectly',count:50,pct:66},{label:'Describes somewhat',count:18,pct:24},{label:'Neutral',count:6,pct:8},{label:"Doesn't really describe",count:2,pct:3},{label:"Doesn't describe at all",count:0,pct:0}]},
+      Supportive:       {n:76,rows:[{label:'Describes perfectly',count:45,pct:59},{label:'Describes somewhat',count:21,pct:28},{label:'Neutral',count:8,pct:11},{label:"Doesn't really describe",count:2,pct:3},{label:"Doesn't describe at all",count:0,pct:0}]},
+      'Emotionally aware':{n:76,rows:[{label:'Describes perfectly',count:22,pct:29},{label:'Describes somewhat',count:25,pct:33},{label:'Neutral',count:25,pct:33},{label:"Doesn't really describe",count:2,pct:3},{label:"Doesn't describe at all",count:2,pct:3}]},
     }
   },
   ws: {
@@ -511,11 +520,11 @@ const D = {
       [{label:'Rating 5',count:34,pct:42},{label:'Rating 4',count:24,pct:30},{label:'Rating 3',count:8,pct:10},{label:'Rating 2',count:10,pct:12},{label:'Rating 1',count:4,pct:5}],
     ],
     q12: {
-      Calm:             {n:80,rows:[{label:'Rating 5',count:38,pct:48},{label:'Rating 4',count:27,pct:34},{label:'Rating 3',count:13,pct:16},{label:'Rating 2',count:2,pct:2},{label:'Rating 1',count:0,pct:0}]},
-      Competent:        {n:80,rows:[{label:'Rating 5',count:42,pct:52},{label:'Rating 4',count:28,pct:35},{label:'Rating 3',count:5,pct:6},{label:'Rating 2',count:4,pct:5},{label:'Rating 1',count:1,pct:1}]},
-      Efficient:        {n:80,rows:[{label:'Rating 5',count:46,pct:57},{label:'Rating 4',count:26,pct:32},{label:'Rating 3',count:3,pct:4},{label:'Rating 2',count:4,pct:5},{label:'Rating 1',count:1,pct:1}]},
-      Supportive:       {n:80,rows:[{label:'Rating 5',count:40,pct:50},{label:'Rating 4',count:21,pct:26},{label:'Rating 3',count:9,pct:11},{label:'Rating 2',count:10,pct:12},{label:'Rating 1',count:0,pct:0}]},
-      'Emotionally aware':{n:80,rows:[{label:'Rating 5',count:22,pct:28},{label:'Rating 4',count:20,pct:25},{label:'Rating 3',count:27,pct:34},{label:'Rating 2',count:9,pct:11},{label:'Rating 1',count:2,pct:2}]},
+      Calm:             {n:80,rows:[{label:'Describes perfectly',count:38,pct:48},{label:'Describes somewhat',count:27,pct:34},{label:'Neutral',count:13,pct:16},{label:"Doesn't really describe",count:2,pct:2},{label:"Doesn't describe at all",count:0,pct:0}]},
+      Competent:        {n:80,rows:[{label:'Describes perfectly',count:42,pct:52},{label:'Describes somewhat',count:28,pct:35},{label:'Neutral',count:5,pct:6},{label:"Doesn't really describe",count:4,pct:5},{label:"Doesn't describe at all",count:1,pct:1}]},
+      Efficient:        {n:80,rows:[{label:'Describes perfectly',count:46,pct:57},{label:'Describes somewhat',count:26,pct:32},{label:'Neutral',count:3,pct:4},{label:"Doesn't really describe",count:4,pct:5},{label:"Doesn't describe at all",count:1,pct:1}]},
+      Supportive:       {n:80,rows:[{label:'Describes perfectly',count:40,pct:50},{label:'Describes somewhat',count:21,pct:26},{label:'Neutral',count:9,pct:11},{label:"Doesn't really describe",count:10,pct:12},{label:"Doesn't describe at all",count:0,pct:0}]},
+      'Emotionally aware':{n:80,rows:[{label:'Describes perfectly',count:22,pct:28},{label:'Describes somewhat',count:20,pct:25},{label:'Neutral',count:27,pct:34},{label:"Doesn't really describe",count:9,pct:11},{label:"Doesn't describe at all",count:2,pct:2}]},
     }
   }
 };
@@ -542,34 +551,46 @@ bars('ov_pref', ovRows, ovC);
 const CONCEPTS = ['Morning Routine','Document Digitizer','Language Tutor','Grocery & Meal Prep','Work / School'];
 const cmpSections = [
   { title:'Perception & Relevance', rows:[
-    {q:'Relevance',          t1l:'Extremely relevant',       t2l:'Extremely + Very relevant',
-     top1:[30,17,28,38,19], top2:[55,54,40,66,38]},
-    {q:'Challenge level',    t1l:'Huge challenge',           t2l:'Huge + Somewhat of a challenge',
-     top1:[14,8,10,14,16],  top2:[44,32,41,46,40]},
-    {q:'Improvement vs. today',t1l:'Huge improvement',      t2l:'Huge + Somewhat of an improvement',
-     top1:[41,44,47,50,34], top2:[66,69,71,74,62]},
+    {q:'Relevance',             t1l:'Extremely relevant',             t2l:'Extremely + Very relevant',
+     top1:[30,17,28,38,19],    top2:[55,54,40,66,38]},
+    {q:'Challenge level',       t1l:'Huge challenge',                 t2l:'Huge + Somewhat of a challenge',
+     top1:[14,8,10,15,16],     top2:[44,32,40,46,40]},
+    {q:'Improvement vs. today', t1l:'Huge improvement',               t2l:'Huge + Somewhat of an improvement',
+     top1:[41,44,47,50,34],    top2:[66,69,71,74,61]},
   ]},
   { title:'Video Reaction', rows:[
-    {q:'Like the video',     t1l:'Love it',                  t2l:'Love it + Like it',
-     top1:[41,32,44,49,36], top2:[78,77,86,83,67]},
-    {q:'Helpfulness day-to-day',t1l:'Very helpful',          t2l:'Very + Somewhat helpful',
-     top1:[41,44,46,54,35], top2:[80,71,71,80,64]},
-    {q:'Excitement about Floyd',t1l:'Very Excited',          t2l:'Very Excited + Somewhat excited',
-     top1:[42,39,42,54,36], top2:[79,69,80,84,65]},
-    {q:'Likelihood to use',  t1l:'Very likely',              t2l:'Very + Somewhat likely',
-     top1:[46,45,47,54,40], top2:[73,69,75,83,61]},
-    {q:'Want Floyd in home', t1l:'Yes, definitely',          t2l:'Yes, definitely + Pretty close',
-     top1:[39,41,38,46,35], top2:[70,66,66,71,57]},
+    {q:'Like the video',        t1l:'Love it',                        t2l:'Love it + Like it',
+     top1:[41,32,44,49,36],    top2:[77,77,86,83,68]},
+    {q:'Helpfulness day-to-day',t1l:'Very helpful',                   t2l:'Very + Somewhat helpful',
+     top1:[41,44,46,54,35],    top2:[80,70,71,80,64]},
+    {q:'Excitement about Floyd',t1l:'Very Excited',                   t2l:'Very Excited + Somewhat excited',
+     top1:[42,39,42,54,36],    top2:[79,69,79,84,65]},
+    {q:'Likelihood to use',     t1l:'Very likely',                    t2l:'Very + Somewhat likely',
+     top1:[47,45,47,54,40],    top2:[73,69,75,83,61]},
+    {q:'Want Floyd in home',    t1l:'Yes, definitely',                t2l:'Yes, definitely + Pretty close',
+     top1:[39,41,38,46,35],    top2:[70,66,65,71,57]},
   ]},
   { title:'Agreement Statements (1–5 scale)', rows:[
-    {q:'Saves me a lot of time',      t1l:'Rating 5',        t2l:'Rating 4 + 5',
-     top1:[39,44,33,49,36], top2:[64,65,58,74,60]},
-    {q:'Home would run more smoothly',t1l:'Rating 5',        t2l:'Rating 4 + 5',
-     top1:[38,31,26,39,36], top2:[69,55,50,73,56]},
-    {q:'Trust data used responsibly', t1l:'Rating 5',        t2l:'Rating 4 + 5',
-     top1:[27,24,15,26,26], top2:[61,52,48,50,57]},
-    {q:'Improvement over existing tech',t1l:'Rating 5',      t2l:'Rating 4 + 5',
-     top1:[44,35,51,61,42], top2:[76,74,76,82,72]},
+    {q:'Saves me a lot of time',         t1l:'Rating 5 (Strongly agree)', t2l:'Rating 4+5',
+     top1:[39,44,33,49,36],    top2:[65,65,58,74,60]},
+    {q:'Home would run more smoothly',   t1l:'Rating 5 (Strongly agree)', t2l:'Rating 4+5',
+     top1:[38,31,26,40,36],    top2:[69,55,50,74,56]},
+    {q:'Trust data used responsibly',    t1l:'Rating 5 (Strongly agree)', t2l:'Rating 4+5',
+     top1:[27,24,15,26,26],    top2:[61,52,49,50,57]},
+    {q:'Improvement over existing tech', t1l:'Rating 5 (Strongly agree)', t2l:'Rating 4+5',
+     top1:[44,35,51,61,43],    top2:[76,75,76,82,72]},
+  ]},
+  { title:'Q12 — Personality / Style Rating', rows:[
+    {q:'Calm',              t1l:'Describes perfectly', t2l:'Describes perfectly + Describes somewhat',
+     top1:[49,52,54,50,48],    top2:[86,90,78,87,81]},
+    {q:'Competent',         t1l:'Describes perfectly', t2l:'Describes perfectly + Describes somewhat',
+     top1:[52,51,51,61,53],    top2:[89,80,88,84,88]},
+    {q:'Efficient',         t1l:'Describes perfectly', t2l:'Describes perfectly + Describes somewhat',
+     top1:[51,47,50,66,58],    top2:[86,85,76,90,90]},
+    {q:'Supportive',        t1l:'Describes perfectly', t2l:'Describes perfectly + Describes somewhat',
+     top1:[54,49,72,59,50],    top2:[86,89,92,87,76]},
+    {q:'Emotionally aware', t1l:'Describes perfectly', t2l:'Describes perfectly + Describes somewhat',
+     top1:[30,24,40,29,28],    top2:[66,59,75,62,53]},
   ]},
 ];
 
